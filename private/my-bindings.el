@@ -13,15 +13,16 @@
 
 (map! [f9]   'what-face
       ;; Essential
-      "M-x"  'smex
+      ;; "M-;"  'eval-expression
+      ;; "M-:"  'eval-region
+      ;; "M-X"  'smex-major-mode-commands
+      "M-X"  'smex
       "A-x"  'smex
-      "M-X"  'smex-major-mode-commands
       "A-X"  'smex-major-mode-commands
-      "M-;"  'eval-expression
       "A-;"  'eval-expression
       ;; Tools
-      "M-/"  'evil-commentary-line
       "A-/"  'evil-commentary-line
+      "M-/"  'evil-commentary-line
       "M-b"  'doom:build
       "C-`"  'doom/popup-last-buffer
       "M-~"  'doom/eshell
@@ -30,20 +31,10 @@
       "M-="  'text-scale-increase
       "M--"  'text-scale-decrease
       ;; Simple window navigation/manipulation
-      "M-t"  'doom:tab-create
-      "M-T"  'doom/tab-display
       "M-w"  'doom/close-window-or-tab
       "M-W"  'delete-frame
       "M-n"  'doom/new-buffer
       "M-N"  'doom/new-frame
-      "C-j"  'evil-window-down
-      "C-k"  'evil-window-up
-      "C-h"  'evil-window-left
-      "C-l"  'evil-window-right
-      "A-C-j" 'doom/evil-window-resize-d
-      "A-C-k" 'doom/evil-window-resize-u
-      "A-C-h" 'doom/evil-window-resize-l
-      "A-C-l" 'doom/evil-window-resize-r
       ;; Temporary escape into emacs mode
       [C-escape]    'evil-emacs-state
       :e [C-escape] 'evil-normal-state
@@ -52,10 +43,11 @@
       :e "j"    'evil-next-line
       :e "k"    'evil-previous-line
       :e "l"    'evil-forward-char
-      :e "C-h"  'evil-window-left
-      :e "C-j"  'evil-window-down
-      :e "C-k"  'evil-window-up
-      :e "C-l"  'evil-window-right
+      :e "C-S-h"  'evil-window-left
+      :e "C-S-j"  'evil-window-up
+      :e "C-S-k"  'evil-window-down
+      :e "C-S-l"  'evil-window-right
+        "C-w"     'ace-window
       ;; Switching tabs (workgroups)
       :m "C-1"  (λ! (doom:switch-to-tab 0))
       :m "C-2"  (λ! (doom:switch-to-tab 1))
@@ -219,17 +211,17 @@
       ;; paste from recent yank register (which isn't overwritten)
       :v  "C-p" "\"0p"
 
-      (:map evil-window-map ; prefix "C-w"
+    (:map evil-window-map ; prefix "C-w"
         ;; Navigation
-        "C-h"     'evil-window-left
-        "C-j"     'evil-window-down
-        "C-k"     'evil-window-up
-        "C-l"     'evil-window-right
+        "C-S-h"     'evil-window-left
+        "C-S-j"     'evil-window-up
+        "C-S-k"     'evil-window-down
+        "C-S-l"     'evil-window-right
         "C-w"     'ace-window
         ;; Swapping windows
         "H"       'doom/evil-window-move-l
-        "J"       'doom/evil-window-move-d
-        "K"       'doom/evil-window-move-u
+        "J"       'doom/evil-window-move-u
+        "K"       'doom/evil-window-move-d
         "L"       'doom/evil-window-move-r
         "C-S-w"   (λ! (ace-window 4))
         ;; Window undo/redo
@@ -333,5 +325,245 @@
       ;; escape from insert mode (more responsive than using key-chord-define)
       :irv "C-g" 'evil-normal-state)
 
+
+(global-set-key (kbd "<delete>")                           nil) ;; Remove the old keybinding
+(global-set-key (kbd "<delete>")                           'org-delete-char)
+
+(global-set-key (kbd "M-;")                                nil)
+(global-set-key (kbd "M-;")                                'eval-expression)
+
+(global-set-key (kbd "M-:")                                nil)
+(global-set-key (kbd "M-:")                                'eval-region)
+
+(global-set-key (kbd "A-:")                                'eval-region)
+(global-set-key (kbd "A-;")                                'eval-expression)
+
+(global-set-key (kbd "M-x")                                nil)
+(global-set-key (kbd "M-x")                                'clipboard-kill-region)
+
+(global-set-key (kbd "M-X")                                nil)
+(global-set-key (kbd "M-X")                                'helm-M-x)
+
+(global-set-key (kbd "A-x")                                'helm-M-x)
+(global-set-key (kbd "A-X")                                'smex)
+
+(global-set-key (kbd "C-x p")                              'helm-M-x)
+(global-set-key (kbd "C-x P")                              'smex)
+
+
+;; TODO expand handling of indent/dedent fx to include (in addition to cursor point), moving selected regions
+(global-set-key (kbd "<C-tab>")                            (λ! (insert "    ")))
+(global-set-key (kbd "<C-S-tab>")                          (λ! (delete-char 4)))
+(global-set-key (kbd "A-c f")                              'doom/org-toggle-fold)
+(global-set-key (kbd "A-c <up>")                           'move-text-line-up)
+(global-set-key (kbd "A-c <down>")                         'move-text-line-down)
+(global-set-key (kbd "A-c <C-up>")                         'move-text-region-up)
+(global-set-key (kbd "A-c <C-down>")                       'move-text-region-down)
+;; (global-set-key (kbd "A-c <C-down>")                       (λ! (move-text-region-down)
+;;                                                                (insert "
+;; ")))
+(global-set-key (kbd "C-c a")                                'org-table-align)
+;; (global-set-key [f8] 'neotree-toggle)
+
+(global-set-key [f8]                        (λ! (neotree-toggle)))
+
+;; (global-set-key [f8]                        (λ! (neotree-toggle) (setq-local tab-width 1)(refresh)))
+;;                                                                  (enlarge-frame-horizontally 10)))
+
+(setq neo-smart-open t)
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+(defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+ 
+ (global-set-key (kbd "<S-f8>") 'neotree-project-dir)
+
+(when neo-persist-show
+    ;; (add-hook 'popwin:before-popup-hook
+              ;; (lambda () (setq neo-persist-show nil)))
+    (add-hook 'popwin:after-popup-hook
+              (λ! (setq neo-persist-show t)
+                         (setq-local tab-width 1)
+                         (neotree-refresh)
+              )))
+
+
+(global-set-key (kbd "C-c a") 'my-macro)
+
+
+
+;; (global-set-key (kbd "<S-mouse-1>")                         nil)
+;; (global-set-key (kbd "<S-up-mouse-1>")                      nil)
+(global-set-key (kbd "<S-down-mouse-1>")                    nil)
+(global-set-key (kbd "<S-down-mouse-1>")                    'mc/add-cursor-on-click)     ;; 'ace-mc-add-multiple-cursors)
+(global-set-key (kbd "<C-down-mouse-1>")                    nil)
+(global-set-key (kbd "<C-down-mouse-1>")                    'multiple-cursors-mode)
+;; (global-set-key (kbd "C-C")                                 nil)
+(global-set-key (kbd "C-C d")                               'mc/remove-current-cursor)
+(global-set-key (kbd "C-C D")                               'mc/remove-duplicated-cursors)
+(global-set-key (kbd "C-w")                                 nil)
+(global-set-key (kbd "C-w C-q <down-mouse-1>")              'mouse-remove-window)
+(global-set-key (kbd "C-w C-w <down-mouse-1>")              'tear-off-window)
+
+
+;;
+;;   | TAB/WORKGROUP | [ M-A-... ]   |
+;;   | FRAME         | [ A-C-M-... ] |
+;;   | WINDOW        | [ C-A-... ]   |
+;;   | BUFFER        | [ C-b ... ]   | 
+;;             
+
+;;        FRAME  [ A-C-M-... ]
+;;
+;;
+;; min/max/full
+(global-set-key (kbd "A-C-M-\\")                            (λ! (toggle-max-frame-vertically)))
+(global-set-key (kbd "A-C-M--")                             (λ! (toggle-max-frame-horizontally)))
+;; (global-set-key (kbd "<A-C-M-return>")                      (toggle-frame-fullscreen))
+(global-set-key (kbd "<A-C-M-return>")                      (λ! (toggle-frame-fullscreen)))
+;; split
+;; (global-set-key (kbd "A-C-M--")                             'split-frame-horizontally)
+;; (global-set-key (kbd "A-C-M-\\")                            'split-frame-vertically)
+;; resize frame
+(global-set-key (kbd "A-C-M-<home>")                        (λ! (shrink-frame-horizontally 14)))
+(global-set-key (kbd "A-C-M-<end>")                         (λ! (enlarge-frame-horizontally 14)))
+(global-set-key (kbd "A-C-M-<prior>")                       (λ! (shrink-frame 7)))
+(global-set-key (kbd "A-C-M-<next>")                        (λ! (enlarge-frame 7)))
+;; move frame
+(global-set-key (kbd "A-C-M-<left>")                        (λ! (move-frame-left 10)))
+(global-set-key (kbd "A-C-M-<right>")                       (λ! (move-frame-right 10)))
+(global-set-key (kbd "A-C-M-<up>")                          (λ! (move-frame-up 8)))
+(global-set-key (kbd "A-C-M-<down>")                        (λ! (move-frame-down 8)))
+;; -- micro
+(global-set-key (kbd "A-C-M-S-<home>")                      (λ! (shrink-frame-horizontally 2)))
+(global-set-key (kbd "A-C-M-S-<end>")                       (λ! (enlarge-frame-horizontally 2)))
+(global-set-key (kbd "A-C-M-S-<prior>")                     (λ! (shrink-frame 1)))
+(global-set-key (kbd "A-C-M-S-<next>")                      (λ! (enlarge-frame 1)))
+(global-set-key (kbd "A-C-M-S-<left>")                      (λ! (move-frame-left 2)))
+(global-set-key (kbd "A-C-M-S-<right>")                     (λ! (move-frame-right 2)))
+(global-set-key (kbd "A-C-M-S-<up>")                        (λ! (move-frame-up 1)))
+(global-set-key (kbd "A-C-M-S-<down>")                      (λ! (move-frame-down 1)))
+;; transparency
+(global-set-key (kbd "A-C-M-[")                             (λ! (decrease-frame-transparency 15)))
+(global-set-key (kbd "A-C-M-]")                             (λ! (increase-frame-transparency 15)))
+
+;;        TAB/WORKGROUP [ M-A-... ]
+;;
+(global-set-key (kbd "<M-A-home>")                          (λ! (doom:switch-to-tab 0)
+                                                                (doom/tab-display)))
+(global-set-key (kbd "<M-A-end>")                           (λ! (doom:switch-to-tab-last)
+                                                                (doom/tab-display)))
+(global-set-key (kbd "M-A-<prior>")                         (λ! (wg-switch-to-workgroup-left)
+                                                                (doom/tab-display)))
+(global-set-key (kbd "M-A-<next>")                          (λ! (wg-switch-to-workgroup-right)
+                                                                (doom/tab-display)))
+(global-set-key (kbd "<M-A-f13>")                           'doom/tab-display)
+(global-set-key (kbd "<help>")                               nil)
+(global-set-key (kbd "<M-A-help>")                          'doom:tab-create)
+(global-set-key (kbd "<M-A-delete>")                        'doom:kill-tab)
+
+;;        WINDOW [ C-A-... ]
+;;
+;; delete
+(global-set-key (kbd "<C-A-backspace>")                      'remove-window)
+
+;; split
+(global-set-key (kbd "C-A-\\")                               'split-window-horizontally)
+(global-set-key (kbd "C-A--")                                'split-window-vertically)
+;; resize
+(global-set-key (kbd "C-A-<home>")                           (λ! (shrink-window-horizontally 10)))
+(global-set-key (kbd "C-A-<end>")                            (λ! (enlarge-window-horizontally 10)))
+(global-set-key (kbd "C-A-<prior>")                          (λ! (shrink-window 7)))
+(global-set-key (kbd "C-A-<next>")                           (λ! (enlarge-window 7)))
+;; move frame
+(global-set-key (kbd "C-A-<left>")                           (λ! (doom/evil-window-resize-l 10)))
+(global-set-key (kbd "C-A-<right>")                          (λ! (doom/evil-window-resize-r 10)))
+(global-set-key (kbd "C-A-<up>")                             (λ! (doom/evil-window-resize-u 4)))
+(global-set-key (kbd "C-A-<down>")                           (λ! (doom/evil-window-resize-d 4)))
+;; -- micro
+(global-set-key (kbd "C-A-S-<home>")                         (λ! (shrink-window-horizontally 2)))
+(global-set-key (kbd "C-A-S-<end>")                          (λ! (enlarge-window-horizontally 2)))
+(global-set-key (kbd "C-A-S-<prior>")                        (λ! (shrink-window 1)))
+(global-set-key (kbd "C-A-S-<next>")                         (λ! (enlarge-window 1)))
+(global-set-key (kbd "C-A-S-<left>")                         (λ! (doom/evil-window-resize-l 10)))
+(global-set-key (kbd "C-A-S-<right>")                        (λ! (doom/evil-window-resize-r 10)))
+(global-set-key (kbd "C-A-S-<up>")                           (λ! (doom/evil-window-resize-u 4)))
+(global-set-key (kbd "C-A-S-<down>")                         (λ! (doom/evil-window-resize-d 4)))
+
+;;        BUFFER [ C-b ... ]
+;;
+(global-set-key (kbd "C-b")                                  nil) 
+(global-set-key (kbd "C-b <C-home>")                         'beginning-of-buffer)
+(global-set-key (kbd "C-b <C-end>")                          'end-of-buffer)
+(global-set-key (kbd "C-b <left>")                           'previous-buffer)
+(global-set-key (kbd "C-b <right>")                          'next-buffer)
+(global-set-key (kbd "C-b <deletechar>")                     'kill-this-buffer)
+(global-set-key (kbd "C-x K")                                'kill-this-buffer)
+
+(global-set-key (kbd "C-b p")                                'doom/ivy-switch-project-buffer)
+(global-set-key (kbd "C-b g")                                'ivy-switch-buffer)
+
+
+;; ===========================================
+;; -------------------------------------------
+;; -------- DEVELOPMENT IN PROGRESS ----------
+;; -------------------------------------------
+;; ===========================================
+
+
+;; KEEP
+;;
+
+
+;; NOTES
+;; 
+;; 
+;; cancel multi-cursor if active else ...(with ctrl-clicking) :EMACS::CURSOR::SETTINGS: 
+;; learn text selection via emacs' `mark` method
+;;
+;; sets mark A at cursor
+;; set mark B at point
+;; selects A:B
+
+(progn
+  (neotree-show)
+  (setq-local tab-width 1)
+)
+
+;; ===========================================
+;; ===========================================
+;; ===========================================
+
+;; (global-set-key (kbd "C-M-A-S-<left>")                       (λ! (move-frame-left 10)
+;;                                                                  (enlarge-frame-horizontally 10)))
+
+;;(define-key ivy-minibuffer-map (kbd "<wheel-up>") 'ivy-previous-line)
+;;(define-key ivy-minibuffer-map (kbd "<wheel-down>") 'ivy-next-line)
+;;(define-key info (kbd "<wheel-up>") 'ivy-previous-line)
+;;(define-key info (kbd "<wheel-down>") 'ivy-next-line)
+
+;;ivy-switch-buffer-other-window
+;;ivy-gitlab-list-projects
+;;(global-set-key (kbd "C-c x") 'clipboard-kill-region)
+;;(global-set-key (kbd "C-c c") 'clipboard-kill-ring-save)
+;;(global-set-key (kbd "C-c v") 'clipboard-yank)
+
+
+;; ===========================================
+;; ===========================================
+
+
 (provide 'my-bindings)
 ;;; my-bindings.el ends here
+
+
