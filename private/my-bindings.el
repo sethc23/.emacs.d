@@ -326,81 +326,49 @@
       :irv "C-g" 'evil-normal-state)
 
 
-(global-set-key (kbd "<delete>")                           nil) ;; Remove the old keybinding
-(global-set-key (kbd "<delete>")                           'org-delete-char)
+(global-set-key (kbd "<delete>")                            nil) ;; Remove the old keybinding
+(global-set-key (kbd "<delete>")                            'org-delete-char)
 
-(global-set-key (kbd "M-;")                                nil)
-(global-set-key (kbd "M-;")                                'eval-expression)
+(global-set-key (kbd "M-;")                                 nil)
+(global-set-key (kbd "M-;")                                 'eval-expression)
 
-(global-set-key (kbd "M-:")                                nil)
-(global-set-key (kbd "M-:")                                'eval-region)
+(global-set-key (kbd "M-:")                                 nil)
+(global-set-key (kbd "M-:")                                 'eval-region)
 
-(global-set-key (kbd "A-:")                                'eval-region)
-(global-set-key (kbd "A-;")                                'eval-expression)
+(global-set-key (kbd "A-:")                                 'eval-region)
+(global-set-key (kbd "A-;")                                 'eval-expression)
 
-(global-set-key (kbd "M-x")                                nil)
-(global-set-key (kbd "M-x")                                'clipboard-kill-region)
+(global-set-key (kbd "M-x")                                 nil)
+(global-set-key (kbd "M-x")                                 'clipboard-kill-region)
 
-(global-set-key (kbd "M-X")                                nil)
-(global-set-key (kbd "M-X")                                'helm-M-x)
+(global-set-key (kbd "M-X")                                 nil)
+(global-set-key (kbd "M-X")                                 'helm-M-x)
 
-(global-set-key (kbd "A-x")                                'helm-M-x)
-(global-set-key (kbd "A-X")                                'smex)
+(global-set-key (kbd "A-x")                                 'helm-M-x)
+(global-set-key (kbd "A-X")                                 'smex)
 
-(global-set-key (kbd "C-x p")                              'helm-M-x)
-(global-set-key (kbd "C-x P")                              'smex)
+(global-set-key (kbd "C-x p")                               'helm-M-x)
+(global-set-key (kbd "C-x P")                               'smex)
 
 
 ;; TODO expand handling of indent/dedent fx to include (in addition to cursor point), moving selected regions
-(global-set-key (kbd "<C-tab>")                            (λ! (insert "    ")))
-(global-set-key (kbd "<C-S-tab>")                          (λ! (delete-char 4)))
-(global-set-key (kbd "A-c f")                              'doom/org-toggle-fold)
-(global-set-key (kbd "A-c <up>")                           'move-text-line-up)
-(global-set-key (kbd "A-c <down>")                         'move-text-line-down)
-(global-set-key (kbd "A-c <C-up>")                         'move-text-region-up)
-(global-set-key (kbd "A-c <C-down>")                       'move-text-region-down)
-;; (global-set-key (kbd "A-c <C-down>")                       (λ! (move-text-region-down)
-;;                                                                (insert "
+(global-set-key (kbd "<C-tab>")                             (λ! (insert "    ")))
+(global-set-key (kbd "<C-S-tab>")                           (λ! (delete-char 4)))
+(global-set-key (kbd "A-c f")                               'doom/org-toggle-fold)
+(global-set-key (kbd "A-c <up>")                            'move-text-line-up)
+(global-set-key (kbd "A-c <down>")                          'move-text-line-down)
+(global-set-key (kbd "A-c <C-up>")                          'move-text-region-up)
+(global-set-key (kbd "A-c <C-down>")                        'move-text-region-down)
+;; (global-set-key (kbd "A-c <C-down>")                        (λ! (move-text-region-down)
+;;                                                                 (insert "
 ;; ")))
-(global-set-key (kbd "C-c a")                                'org-table-align)
+(global-set-key (kbd "C-c a")                               'org-table-align)
 ;; (global-set-key [f8] 'neotree-toggle)
 
-(global-set-key [f8]                        (λ! (neotree-toggle)))
-
+(global-set-key [f8]                                        'neotree-toggle)
+(global-set-key (kbd "<S-f8>")                              'neotree-project-dir)
 ;; (global-set-key [f8]                        (λ! (neotree-toggle) (setq-local tab-width 1)(refresh)))
 ;;                                                                  (enlarge-frame-horizontally 10)))
-
-(setq neo-smart-open t)
-(setq projectile-switch-project-action 'neotree-projectile-action)
-
-(defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
- 
- (global-set-key (kbd "<S-f8>") 'neotree-project-dir)
-
-(when neo-persist-show
-    ;; (add-hook 'popwin:before-popup-hook
-              ;; (lambda () (setq neo-persist-show nil)))
-    (add-hook 'popwin:after-popup-hook
-              (λ! (setq neo-persist-show t)
-                         (setq-local tab-width 1)
-                         (neotree-refresh)
-              )))
-
-
-(global-set-key (kbd "C-c a") 'my-macro)
-
-
 
 ;; (global-set-key (kbd "<S-mouse-1>")                         nil)
 ;; (global-set-key (kbd "<S-up-mouse-1>")                      nil)
@@ -420,8 +388,8 @@
 ;;   | TAB/WORKGROUP | [ M-A-... ]   |
 ;;   | FRAME         | [ A-C-M-... ] |
 ;;   | WINDOW        | [ C-A-... ]   |
-;;   | BUFFER        | [ C-b ... ]   | 
-;;             
+;;   | BUFFER        | [ C-b ... ]   |
+;;
 
 ;;        FRAME  [ A-C-M-... ]
 ;;
@@ -502,7 +470,7 @@
 
 ;;        BUFFER [ C-b ... ]
 ;;
-(global-set-key (kbd "C-b")                                  nil) 
+(global-set-key (kbd "C-b")                                  nil)
 (global-set-key (kbd "C-b <C-home>")                         'beginning-of-buffer)
 (global-set-key (kbd "C-b <C-end>")                          'end-of-buffer)
 (global-set-key (kbd "C-b <left>")                           'previous-buffer)
@@ -526,9 +494,9 @@
 
 
 ;; NOTES
-;; 
-;; 
-;; cancel multi-cursor if active else ...(with ctrl-clicking) :EMACS::CURSOR::SETTINGS: 
+;;
+;;
+;; cancel multi-cursor if active else ...(with ctrl-clicking) :EMACS::CURSOR::SETTINGS:
 ;; learn text selection via emacs' `mark` method
 ;;
 ;; sets mark A at cursor

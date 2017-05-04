@@ -64,6 +64,7 @@
       ;;module-julia       ; a better, faster MATLAB
       ;;module-latex       ; write papers in Emacs
 ;;      module-lua         ; one-based indices? one-based indices
+      module-neotree_mods
       ;;module-octave      ; math isn't a choice, it's a way of life
       ;;module-php         ; make php less awful to work with
       ;;module-processing  ; for prototyping
@@ -90,8 +91,9 @@
 ;      custom-write       ; Emacs as a word processor
 
       ;;; Personal settings
-       my-commands
-       my-bindings
+      my-commands
+      my-bindings
+       
 )
 
 (custom-set-variables

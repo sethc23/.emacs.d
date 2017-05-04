@@ -104,10 +104,10 @@
 ;; Org-mode
 (ex! "org"         'doom:org-capture)
 (add-hook! org-mode
-  ;;(ex! "org"         'doom:org-helm-search)   ; search org notes
-  (ex-local! "att[ach]" 'doom:org-attach)          ; attach file to org file
-  (ex-local! "link"     'doom:org-link)
-  (ex-local! "vlc"      'doom-org-insert-vlc))
+;;(ex! "org"         'doom:org-helm-search)   ; search org notes
+(ex-local! "att[ach]" 'doom:org-attach)          ; attach file to org file
+(ex-local! "link"     'doom:org-link)
+(ex-local! "vlc"      'doom-org-insert-vlc))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here
