@@ -34,3 +34,9 @@ games
 el-get
 helm-adaptive-history
 project-explorer-cache
+abbrev_defs
+elpa_mirror_tmp/
+org-recent-headings
+places
+private/tmp_cache/
+url/
