@@ -115,15 +115,18 @@
 
 (use-package doom-themes
   :config
-  (setq doom-neotree-enable-variable-pitch t
+  (setq ;doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 3)
+        ; doom-neotree-line-spacing 3
+        )
   (load-theme doom-ui-theme t)
   ;; brighter source buffers
   (add-hook 'find-file-hook 'doom-buffer-mode)
   ;; Custom neotree theme
-  (when window-system
-    (require 'doom-neotree)))
+  ; (when window-system
+  ;   (require 'doom-neotree)
+  ;   )
+  )
 
 (use-package beacon
   :config

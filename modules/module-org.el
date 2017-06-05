@@ -184,6 +184,7 @@ system can keep track of each buffer's attachments.")
   ;; Enable encryption
   (require 'epa-file)
   (epa-file-enable)
+
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance '("crypt")

@@ -97,8 +97,7 @@ active.")
 (add-hook 'find-file-hook 'doom-ml|env-update)
 
 (defun doom-ml|env-update ()
-  "Update (py|rb)env version string in `doom-ml--env-version', generated with
-`doom-ml--env-command'."
+  "Update (py|rb)env version string in `doom-ml--env-version', generated with `doom-ml--env-command'."
   (when doom-ml--env-command
     (let* ((default-directory (doom/project-root))
            (s (shell-command-to-string doom-ml--env-command)))
@@ -107,15 +106,10 @@ active.")
                                    s)))))
 
 (defmacro def-version-cmd! (mode command)
-  "Define a COMMAND for MODE that will set `doom-ml--env-command' when that mode
-is activated, which should return the version number of the current environment.
-It is used by `doom-ml|env-update' to display a version number in the modeline.
-For instance:
-
-  (def-version-cmd! ruby-mode \"ruby --version | cut -d' ' -f2\")
-
-This will display the ruby version in the modeline in ruby-mode buffers. It is
-cached the first time."
+  "Define a COMMAND for MODE that will set `doom-ml--env-command' when that mode is activated, which should return the version number of the current environment. It is used by `doom-ml|env-update' to display a version number in the modeline.
+  For instance:
+  	(def-version-cmd! ruby-mode \"ruby --version | cut -d' ' -f2\")
+  This will display the ruby version in the modeline in ruby-mode buffers. It is cached the first time."
   `(add-hook ',mode (lambda () (setq doom-ml--env-command ,command))))
 
 (defun doom-ml-flycheck-count (state)
@@ -136,8 +130,7 @@ cached the first time."
        (pl/make-xpm "percent" color color (reverse data))))))
 
 (defun doom-buffer-path ()
-  "Displays the buffer's full path relative to the project root (includes the
-project root). Excludes the file basename. See `doom-buffer-name' for that."
+  "Displays the buffer's full path relative to the project root (includes the project root). Excludes the file basename. See `doom-buffer-name' for that."
   (if buffer-file-name
     (let* ((default-directory (f-dirname buffer-file-name))
            (buffer-path (f-relative buffer-file-name (doom/project-root)))
@@ -183,8 +176,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
                         'face face))))
 
 (defun *buffer-info ()
-  "Combined information about the current buffer, including the current working
-directory, the file name, and its state (modified, read-only or non-existent)."
+  "Combined information about the current buffer, including the current working directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((all-the-icons-scale-factor 1.2)
         (modified-p (buffer-modified-p))
         faces)
@@ -323,8 +315,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
        " "))))
 
 (defun *selection-info ()
-  "Information about the current selection, such as how many characters and
-lines are selected, or the NxM dimensions of a block selection."
+  "Information about the current selection, such as how many characters and lines are selected, or the NxM dimensions of a block selection."
   (when (and (active) (evil-visual-state-p))
     (concat
      " "

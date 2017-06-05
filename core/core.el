@@ -95,7 +95,7 @@ major-modes, the process gets killed.")
 ;;
 
 ;; UTF-8 as the default coding system, please
-(set-charset-priority 'unicode)        ; pretty
+(set-charset-priority 		 'unicode) ; pretty
 (prefer-coding-system        'utf-8)   ; pretty
 (set-terminal-coding-system  'utf-8)   ; pretty
 (set-keyboard-coding-system  'utf-8)   ; perdy
@@ -129,7 +129,7 @@ major-modes, the process gets killed.")
       echo-keystrokes                    0.02        ; show me what I type
       enable-recursive-minibuffers       nil         ; no minibufferception
       idle-update-delay                  5           ; update a little less often
-      major-mode                        'text-mode
+      major-mode                        'org-mode
       save-interprogram-paste-before-kill nil
       sentence-end-double-space          nil
       ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
