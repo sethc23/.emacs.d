@@ -1,4 +1,4 @@
-;;; move_text.el --- https://www.emacswiki.org/emacs/MoveLine
+;;; custom-move_text.el --- https://www.emacswiki.org/emacs/MoveLine
 
 (defun move-line (n)
   "Move the current line up or down by N lines."
@@ -23,8 +23,9 @@
   (interactive "p")
   (move-line (if (null n) 1 n)))
 
-(global-set-key (kbd "M-<up>") 'move-line-up)
-(global-set-key (kbd "M-<down>") 'move-line-down)
+(defun move-line-up-one () (move-line-up 1))
+(defun move-line-down-one () (move-line-down 1))
+
 
 (defun move-region (start end n)
   "Move the current region up or down by N lines."
@@ -46,8 +47,7 @@
   (interactive "r\np")
   (move-region start end (if (null n) 1 n)))
 
-(global-set-key (kbd "M-<up>") 'move-region-up)
-(global-set-key (kbd "M-<down>") 'move-region-down)
 
-(provide 'move_text)
-;;; move_text.el ends here
+
+(provide 'custom-move_text)
+;;; custom-move_text.el ends here

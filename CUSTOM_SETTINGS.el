@@ -14,7 +14,7 @@
 	(setq enable-recursive-minibuffers t)
 	(setq eval-expression-print-length nil)
 	(setq eval-expression-print-level nil)
-	; (setq evil-want-C-u-scroll t)
+	;; (setq evil-want-C-u-scroll t)
 	(setq fci-rule-color "#969896")
 	(setq font-use-system-font t)
 	(setq inhibit-startup-echo-area-message "ub2")
@@ -45,6 +45,8 @@
 	(setq gmm-tool-bar-style (quote retro))
 	(setq gnus-group-update-tool-bar nil)
 	(setq gnus-summary-tool-bar nil)
+    (setq menu-bar-mode t)
+    (setq tool-bar-mode t)
 	(setq tool-bar-pop-up-mode nil)
 	(setq tool-bar-position (quote top))
 	(setq tool-bar-style (quote text))
@@ -99,6 +101,13 @@
 	(setq diary-file-name-prefix t)
 	(setq diary-hook (quote (ignore)))
 
+;; Add Org files to the agenda when we save them
+(defun to-agenda-on-save-org-mode-file()
+  (when (string= (message "%s" major-mode) "org-mode")
+    (org-agenda-file-to-front)))
+
+(add-hook 'after-save-hook 'to-agenda-on-save-org-mode-file)
+
 	(setq global-orglink-mode t)
 	(setq indent-tabs-mode nil)
 	(setq org-adapt-indentation nil)
@@ -110,7 +119,7 @@
 	(setq org-edit-src-content-indentation 0)
 	(setq org-ellipsis "  ")
 	(setq org-hide-block-startup t)
-	(setq org-mode t)
+    (setq org-mode t)
 	(setq org-startup-indented t)
 	(setq org-startup-with-inline-images t)
 	(setq org-journal-dir "~/org/journal/")
@@ -123,7 +132,7 @@
 	(setq org-agenda-dim-blocked-tasks nil)
 	(setq org-agenda-files
 		(quote (
-			"~/org/seth.org"
+			"~/org/organizer.org"
 			"~/org/seth.t.chase@gmail.com.org"
 		)))
 	(setq org-agenda-finalize-hook (quote (org-agenda-property-add-properties)))
@@ -148,8 +157,19 @@
 			("sh" "bash" "csh" "ash" "dash" "ksh" "mksh" "posh" "zsh")))
 	(setq org-confirm-babel-evaluate nil)
 
+(defvar my/org-basic-task-template "* TODO %^{Task}
+:PROPERTIES:
+:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
+:END:
+Captured %<%Y-%m-%d %H:%M>
+%?
+
+%i
+" "Basic task data")
+
 	(setq org-capture-templates
 		(quote (
+
 			("c" "Changelog" entry
 				(file+headline (f-expand "CHANGELOG.org" (doom/project-root)) "Unreleased")
 				"* %?")
@@ -157,7 +177,132 @@
 				(file+headline org-default-notes-file "Inbox")
 				"* %u %? %i"
 				:prepend t)
+
+        ("a" "Action Item" entry (file+headline "~/org/bjournal/index.org" "NOW")
+             "* [ ] %i\n"
+             :prepend t
+             :clock-in t
+             :immediate-finish t
+             :clock-keep t
+             )
+        ("e" "Save Entry" entry (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "* %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n"
+             :prepend t
+             :clock-resume t
+             :immediate-finish t
+             )
+       ("i" "Save Item" item (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "* [ ] %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n"
+             :prepend t
+             :clock-resume t
+             :immediate-finish t
+             )
+
+        ("t" "Todo" checkitem (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "- [ ] %i \n%a\n[[_from][file+emacs:%f]]\n[[_to][file+emacs:%F]]\n(%T)\n" :prepend)
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+             "* %?\nEntered on %U\n  %i\n  %a")
+
+
+		;;("t" "Tasks" entry
+        ;;   (file+headline "~/org/organizer.org" "Inbox")
+        ;;   ,my/org-basic-task-template)
+          ("T" "Quick task" entry
+           (file+headline "~/org/organizer.org" "Inbox")
+           "* TODO %^{Task}\nSCHEDULED: %t\n"
+           :immediate-finish t)
+          ("i" "Interrupting task" entry
+           (file+headline "~/org/organizer.org" "Inbox")
+           "* STARTED %^{Task}"
+           :clock-in :clock-resume)
+          ("e" "Emacs idea" entry
+           (file+headline "~/org/collections/emacs.org" "Ideas")
+           "* TODO %^{Task}"
+           :immediate-finish t)
+          ("E" "Energy" table-line
+           (file+headline "~/org/collections/health.org" "Track energy")
+           "| %U | %^{Energy 5-awesome 3-fuzzy 1-zzz} | %^{Note} |"
+           :immediate-finish t
+           )
+          ("b" "Business task" entry
+           (file+headline "~/org/collections/business.org" "Tasks")
+           ,my/org-basic-task-template)
+          ("p" "People task" entry
+           (file+headline "~/org/collections/people.org" "Tasks")
+           ,my/org-basic-task-template)
+        ;;  ("j" "Journal entry" plain
+        ;;   (file+datetree "~/org/bjournal/index.org")
+        ;;   "%K - %a\n%i\n%?\n"
+         ;;    :unnarrowed t)
+          ("J" "Journal entry with date" plain
+           (file+datetree+prompt "~/org/bjournal/index.org")
+           "%K - %a\n%i\n%?\n"
+           :unnarrowed t)
+          ("s" "Journal entry with date, scheduled" entry
+           (file+datetree+prompt "~/org/bjournal/index.org")
+           "* \n%K - %a\n%t\t%i\n%?\n"
+           :unnarrowed t)
+          ("c" "Protocol Link" entry (file+headline ,org-default-notes-file "Inbox")
+           "* [[%:link][%:description]] \n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?\n\nCaptured: %U")
+          ("db" "Done - Business" entry
+           (file+headline "~/org/collections/business.org" "Tasks")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("dp" "Done - People" entry
+           (file+headline "~/org/collections/people.org" "Tasks")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("dt" "Done - Task" entry
+           (file+headline "~/org/organizer.org" "Inbox")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("q" "Quick note" item
+           (file+headline "~/org/organizer.org" "Quick notes"))
+          ("l" "Ledger entries")
+          ("lm" "MBNA" plain
+           (file "~/personal/ledger")
+           "%(org-read-date) %^{Payee}
+    Liabilities:MBNA
+    Expenses:%^{Account}  $%^{Amount}
+  " :immediate-finish t)
+          ("ln" "No Frills" plain
+           (file "~/org/collections/ledger")
+           "%(let ((org-read-date-prefer-future nil)) (org-read-date)) * No Frills
+    Liabilities:MBNA
+    Assets:Wayne:Groceries  $%^{Amount}
+  " :immediate-finish t)
+          ("lc" "Cash" plain
+           (file "~/org/collections/ledger")
+           "%(org-read-date) * %^{Payee}
+    Expenses:Cash
+    Expenses:%^{Account}  %^{Amount}
+  ")
+          ("B" "Book" entry
+           (file+datetree "~/org/collections/books.org" "Inbox")
+           "* %^{Title}  %^g
+  %i
+  *Author(s):* %^{Author} \\\\
+  *ISBN:* %^{ISBN}
+
+  %?
+
+  *Review on:* %^t \\
+  %a
+  %U"
+           :clock-in :clock-resume)
+           ("C" "Contact" entry (file "~/org/collections/contacts.org")
+            "* %(org-contacts-template-name)
+  :PROPERTIES:
+  :EMAIL: %(my/org-contacts-template-email)
+  :END:")
+           ("n" "Daily note" table-line (file+olp "~/org/organizer.org" "Inbox")
+            "| %u | %^{Note} |"
+            :immediate-finish t)
+           ("r" "Notes" entry
+            (file+datetree "~/org/organizer.org")
+            "* %?\n\n%i\n%U\n"
+            )
+
+
 		)))
+
 	(setq org-capture-use-agenda-date t)
 
 	(setq org-export-allow-bind-keywords t)
@@ -179,11 +324,12 @@
 
 	(setq package-enable-at-startup t)
 	(setq package-hidden-regexps (quote ("^[^~]+.*$" "^~.*")))
-	(setq package-selected-packages
-		(quote
-			(fold-this hideshowvis yafolding markdown-edit-indirect markdown-mode+ markdown-preview-eww obfusurl immortal-scratch omni-kill omni-log omni-scratch omni-tags persistent-scratch persp-fr persp-mode persp-mode-projectile-bridge persp-projectile scratch scratch-ext scratch-log scratch-pop scratches unkillable-scratch flex-isearch ido-at-point ido-completing-read+ ido-flex-with-migemo ido-grid-mode ido-select-window ido-sort-mtime ido-ubiquitous ido-yes-or-no idomenu cmds-menu menu-bar+ minibuffer-line minimap pianobar ppd-sr-speedbar project-explorer project-local-variables project-persist-drawer project-root project-shells projectile-codesearch projectile-direnv projectile-git-autofetch projectile-speedbar projectile-variable sr-speedbar tabbar tabbar-ruler tool-bar+ totd yascroll cython-mode move-dup move-text autofit-frame emacs-setup fix-input frame-cmds frame-fns frame-mode frame-tag framemove frames-only-mode free-keys org-protocol-jekyll hledger-mode hide-comnt hide-lines hide-region hideshow-org helm helm-anything helm-bind-key helm-books helm-chrome helm-commandlinefu helm-describe-modes helm-fuzzier helm-git helm-git-grep helm-gitlab helm-orgcard helm-proc helm-project-persist helm-spotify helm-spotify-plus helm-systemd helm-themes helm-xref ace-mc centered-cursor-mode evil-mc mc-extras dired-narrow websocket win-switch window+ window-jump window-layout window-purpose tablist auto-org-md autobookmarks calfw calfw-gcal counsel-osx-app imenu-anywhere ivy-gitlab ivy-todo orgtbl-aggregate orgtbl-join orgtbl-show-header origami osx-browse osx-clipboard osx-lib osx-org-clock-menubar codebug operate-on-number org-dotemacs org-easy-img-insert org-ehtml org-repo-todo org-sticky-header outline-magic zeal-at-point yard-mode yaml-mode xpm workgroups2 wgrep web-mode visual-fill-column vimrc-mode use-package unityjs-mode toml-mode tide swift-mode stylus-mode stripe-buffer smex smartparens smart-forward slime shader-mode shackle sass-mode ruby-refactor rspec-mode rotate-text repl-toggle realgud rainbow-mode rainbow-delimiters racer quickrun pug-mode processing-mode powerline pip-requirements phpunit php-refactor-mode php-extras php-boris persistent-soft pcre2el ox-pandoc orglink org2jekyll org-wc org-tree-slide org-transform-tree-table org-tracktable org-time-budgets org-table-sticky-header org-table-comment org-seek org-review org-recent-headings org-random-todo org-preview-html org-plus-contrib org-parser org-mac-link org-journal org-jekyll org-gcal org-fstree org-download org-doing org-dashboard org-context org-cliplink org-capture-pop-frame org-bullets org-bookmark-heading org-board org-beautify-theme org-babel-eval-in-repl org-attach-screenshot org-alert org-agenda-property org-ac openwith opencl-mode omnisharp occur-context-resize ob-sql-mode ob-ipython ob-browser ob-async nose nodejs-repl nlinum neotree nasm-mode moonscript modern-cpp-font-lock mips-mode meghanada markdown-toc less-css-mode julia-mode jsx-mode json-mode js2-refactor irony-eldoc impatient-mode imenu-list ido-vertical-mode highlight-quoted highlight-numbers highlight-indentation help-fns+ haxor-mode haskell-mode hack-mode groovy-mode goto-last-change gorepl-mode google-this go-eldoc glsl-mode gitignore-mode gitconfig-mode git-messenger git-gutter-fringe flycheck-rust flycheck-pos-tip flycheck-irony flx-ido fancy-narrow exec-path-from-shell esup ert-runner ensime emr emmet-mode elmacro eldoc-eval editorconfig dumb-jump doom-theme dockerfile-mode disaster dired-k demangle-mode dash-at-point cuda-mode crystal-mode company-web company-tern company-statistics company-sourcekit company-shell company-restclient company-racer company-quickhelp company-lua company-irony-c-headers company-irony company-inf-ruby company-go company-dict company-ansible company-anaconda command-log-mode coffee-mode cmake-mode browse-at-remote auto-yasnippet auto-compile applescript-mode android-mode all-the-icons ace-link)))
 	(setq use-package-enable-imenu-support t)
 	(setq use-package-verbose t)
+
+	(setq package-selected-packages
+		(quote
+			(fold-this hideshowvis yafolding markdown-edit-indirect markdown-mode+ markdown-preview-eww obfusurl immortal-scratch omni-kill omni-log omni-scratch omni-tags persistent-scratch persp-fr persp-mode persp-mode-projectile-bridge persp-projectile scratch scratch-ext scratch-log scratch-pop scratches unkillable-scratch flex-isearch ido-at-point ido-completing-read+ ido-flex-with-migemo ido-grid-mode ido-select-window ido-sort-mtime ido-ubiquitous ido-yes-or-no idomenu cmds-menu menu-bar+ minibuffer-line minimap pianobar ppd-sr-speedbar project-explorer project-local-variables project-persist-drawer project-root project-shells projectile-codesearch projectile-direnv projectile-git-autofetch projectile-speedbar projectile-variable sr-speedbar tabbar tabbar-ruler tool-bar+ totd yascroll cython-mode move-dup move-text autofit-frame emacs-setup fix-input frame-cmds frame-fns frame-mode frame-tag framemove frames-only-mode free-keys org-protocol-jekyll hledger-mode hide-comnt hide-lines hide-region hideshow-org helm helm-anything helm-bind-key helm-books helm-chrome helm-commandlinefu helm-describe-modes helm-fuzzier helm-git helm-git-grep helm-gitlab helm-orgcard helm-proc helm-project-persist helm-spotify helm-spotify-plus helm-systemd helm-themes helm-xref ace-mc centered-cursor-mode evil-mc mc-extras dired-narrow websocket win-switch window+ window-jump window-layout window-purpose tablist auto-org-md autobookmarks calfw calfw-gcal counsel-osx-app imenu-anywhere ivy-gitlab ivy-todo orgtbl-aggregate orgtbl-join orgtbl-show-header origami osx-browse osx-clipboard osx-lib osx-org-clock-menubar codebug operate-on-number org-dotemacs org-easy-img-insert org-ehtml org-repo-todo org-sticky-header outline-magic zeal-at-point yard-mode yaml-mode xpm workgroups2 wgrep web-mode visual-fill-column vimrc-mode use-package unityjs-mode toml-mode tide swift-mode stylus-mode stripe-buffer smex smartparens smart-forward slime shader-mode shackle sass-mode ruby-refactor rspec-mode rotate-text repl-toggle realgud rainbow-mode rainbow-delimiters racer quickrun pug-mode processing-mode powerline pip-requirements phpunit php-refactor-mode php-extras php-boris persistent-soft pcre2el ox-pandoc orglink org2jekyll org-wc org-tree-slide org-transform-tree-table org-tracktable org-time-budgets org-table-sticky-header org-table-comment org-seek org-review org-recent-headings org-random-todo org-preview-html org-plus-contrib org-parser org-mac-link org-journal org-jekyll org-gcal org-fstree org-download org-doing org-dashboard org-context org-cliplink org-capture-pop-frame org-bullets org-bookmark-heading org-board org-beautify-theme org-babel-eval-in-repl org-attach-screenshot org-alert org-agenda-property org-ac openwith opencl-mode omnisharp occur-context-resize ob-sql-mode ob-ipython ob-browser ob-async nose nodejs-repl nlinum neotree nasm-mode moonscript modern-cpp-font-lock mips-mode meghanada markdown-toc less-css-mode julia-mode jsx-mode json-mode js2-refactor irony-eldoc impatient-mode imenu-list ido-vertical-mode highlight-quoted highlight-numbers highlight-indentation help-fns+ haxor-mode haskell-mode hack-mode groovy-mode goto-last-change gorepl-mode google-this go-eldoc glsl-mode gitignore-mode gitconfig-mode git-messenger git-gutter-fringe flycheck-rust flycheck-pos-tip flycheck-irony flx-ido fancy-narrow exec-path-from-shell evil-visualstar evil-textobj-anyblock evil-snipe evil-search-highlight-persist evil-plugins evil-numbers evil-multiedit evil-matchit evil-magit evil-indent-plus evil-exchange evil-escape evil-embrace evil-easymotion evil-commentary evil-args evil-anzu esup ert-runner ensime emr emmet-mode elmacro eldoc-eval editorconfig dumb-jump doom-theme dockerfile-mode disaster dired-k demangle-mode dash-at-point cuda-mode crystal-mode company-web company-tern company-statistics company-sourcekit company-shell company-restclient company-racer company-quickhelp company-lua company-irony-c-headers company-irony company-inf-ruby company-go company-dict company-ansible company-anaconda command-log-mode coffee-mode cmake-mode browse-at-remote auto-yasnippet auto-compile applescript-mode android-mode all-the-icons ace-link)))
 
 	(setq helm-M-x-always-save-history t)
 	(setq helm-adaptive-mode t)
@@ -220,7 +366,7 @@
 
 	(setq vc-annotate-background "#000000")
 	(setq vc-annotate-color-map
-		(quote
+      (quote
 			((20 . "#B6E63E")
 			 (40 . "#c4db4e")
 			 (60 . "#d3d15f")
@@ -247,41 +393,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#1B2229" "#ff6c6b" "#98be65" "#ECBE7B" "#51afef" "#c678dd" "#46D9FF" "#DFDFDF"])
- '(custom-safe-themes
+ '(org-agenda-files
    (quote
-    ("63b822ccd7a1928a7cbc88037dddf7b74b2f8a507e1bccd7281f20646f72cd0a" "d37b6fc3ea627226e0a703f3b97f18e42d5a58c293a7d34c2483688f72e66ccf" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "227e2c160b0df776257e1411de60a9a181f890cfdf9c1f45535fc83c9b34406b" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" "18a33cdb764e4baf99b23dcd5abdbf1249670d412c6d3a8092ae1a7b211613d5" "6bde11b304427c7821b72a06a60e8d079b8f7ae10b407d8af37ed5e5d59b1324" "e146feef4c2f5abc6140e40f69d75b05cb27ae56644b6f9ced362416090bed1d" default)))
- '(fci-rule-color "#5B6268" t)
- '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#51afef") t)
- '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#98be65") t)
- '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#3B3F46") t)
- '(org-ellipsis "  ")
- '(org-fontify-done-headline t)
- '(org-fontify-quote-and-verse-blocks t)
- '(org-fontify-whole-heading-line t)
- '(vc-annotate-background "#1B2229" t)
- '(vc-annotate-color-map
-   (list
-    (cons 20 "#98be65")
-    (cons 40 "#b4be6c")
-    (cons 60 "#d0be73")
-    (cons 80 "#ECBE7B")
-    (cons 100 "#e6ab6a")
-    (cons 120 "#e09859")
-    (cons 140 "#da8548")
-    (cons 160 "#d38079")
-    (cons 180 "#cc7cab")
-    (cons 200 "#c678dd")
-    (cons 220 "#d974b7")
-    (cons 240 "#ec7091")
-    (cons 260 "#ff6c6b")
-    (cons 280 "#ce6061")
-    (cons 300 "#9d5558")
-    (cons 320 "#6c4a4f")
-    (cons 340 "#5B6268")
-    (cons 360 "#5B6268")) t)
- '(vc-annotate-very-old-color nil t))
+    ("/home/ub2/org/collections/keybindings.org" "~/.emacs.d/CUSTOM_SETTINGS.org" "/home/ub2/org/collections/projects.org" "~/org/organizer.org" "~/org/seth.t.chase@gmail.com.org" "/home/ub2/org/collections/health.org" "/home/ub2/org/collections/business.org" "/home/ub2/org/collections/documents.org" "/home/ub2/org/collections/ledger.org" "/home/ub2/org/collections/services.org" "/home/ub2/org/collections/wiki.org" "/home/ub2/org/collections/books.org" "/home/ub2/org/collections/dev.org" "/home/ub2/org/collections/me.org" "/home/ub2/org/collections/devices.org" "/home/ub2/org/collections/emacs.org" "/home/ub2/org/collections/people.org" "/home/ub2/org/collections/networking.org"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -11,6 +11,17 @@
             '(call-interactively 'counsel-find-file)
             )))))
 
+;; (global-set-key (kbd "C-c i")                               (lambda () (interactive) (find-file "~/.emacs.d/private/custom/index.org")))
+(global-set-key (kbd "C-c b")                               (lambda () (interactive) (find-file "~/org/bjournal/index.org")(split-window-right)))
+(global-set-key (kbd "C-c <prior>")                         'back-button-global-backward)
+(global-set-key (kbd "C-c <next>")                          'back-button-global-forward)
+(bind-key "C-M-r"  'org-capture)
+(global-set-key (kbd "M-<up>") 'move-region-up)
+(global-set-key (kbd "M-<down>") 'move-region-down)
+(global-set-key (kbd "<f9>")                               (lambda () (interactive) (load-file "/home/ub2/.emacs.d/modules/custom-quick_refiling.el")))
+(global-set-key (kbd "C-S-<up>") nil)
+(global-set-key (kbd "C-S-<up>") 'move-line-up-one )
+(global-set-key (kbd "C-S-<down>") 'move-line-down-one )
 
 (global-set-key (kbd "<f11>")                               nil)
 (global-set-key (kbd "<delete>")                            nil) ;; Remove the old keybinding
@@ -40,9 +51,9 @@
 (defun customize-option-with-input-str ()
   "Show all options matching input string."
   (interactive)
-    (let ((x (read-string "Options matching pattern: ")))
-      (customize-apropos-options x)
-    )
+  (let ((x (read-string "Options matching pattern: ")))
+	(customize-apropos-options x)
+  )
   )
 (global-set-key (kbd "C-h x")                               'customize-option-with-input-str)
 
@@ -57,6 +68,10 @@
 ;; (global-set-key (kbd "A-c <C-down>")                        (λ! (move-text-region-down)
 ;;                                                                 (insert "
 ;; ")))
+;;dedent
+
+(global-set-key (kbd "M-z")                                 nil)
+(global-set-key (kbd "M-z")                                 'undo)
 (global-set-key (kbd "C-c a")                               'org-table-align)
 ;; (global-set-key [f8] 'neotree-toggle)
 
@@ -153,6 +168,182 @@
 
 ;; PROJECTS
 (global-set-key (kbd "C-b p")                                'doom/ivy-switch-project-buffer)                           ;;
+
+(global-set-key (kbd "C-c s")                                'yas-insert-snippet)
+
+;; (setq org-capture-templates
+;;       '(
+
+;;         ("e" "Save Entry" entry (file+headline "~/org/seth.org" "UNFILED")
+;;              "* %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n"
+;;              :prepend t
+;;              :clock-resume t
+;;              :immediate-finish t
+;;              )
+;;        ("i" "Save Item" item (file+headline "~/org/seth.org" "UNFILED")
+;;              "* [ ] %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n"
+;;              :prepend t
+;;              :clock-resume t
+;;              :immediate-finish t
+;;              )
+;;         ("t" "Todo" checkitem (file+headline "~/org/seth.org" "UNFILED")
+;;              "- [ ] %i \n%a\n[[_from][file+emacs:%f]]\n[[_to][file+emacs:%F]]\n(%T)\n" :prepend)
+;;         ("j" "Journal" entry (file+datetree "~/org/journal.org")
+;;              "* %?\nEntered on %U\n  %i\n  %a")
+;;         )
+;;     )
+
+;; (map! [f9]   'what-face
+
+;; 	;; Tools
+;; 	"A-/"  'evil-commentary-line
+;; 	"M-/"  'evil-commentary-line
+
+;; 	;;"M-b"  'doom:build
+;; 	"C-`"  'doom/popup-last-buffer
+;; 	"M-~"  'doom/eshell
+
+;; 	;; Text-scaling
+;; 	"M-0"  (λ! (text-scale-set 0))
+;; 	"M-="  'text-scale-increase
+;; 	"M--"  'text-scale-decrease
+
+;; 	;; Simple window navigation/manipulation
+;; 	"M-w"  'doom/close-window-or-tab
+;; 	"M-W"  'delete-frame
+;; 	"M-n"  'doom/new-buffer
+;; 	"M-N"  'doom/new-frame
+
+;; 	;; Text Editing
+;;     [A-left]            'backward-word
+;; 	[A-right]           'forward-word
+;; 	;;"A-SPC"             'just-one-space
+
+;; 	"M-a"               'mark-whole-buffer
+;; 	"M-c"               'evil-yank
+;; 	"M-q"               'save-buffers-kill-emacs
+;; 	"M-s"               'save-buffer
+;; 	"M-v"               'clipboard-yank
+;; 	"M-z"               'undo
+;; 	"M-Z"               'redo
+;; 	[M-f1]              'doom:docs-lookup
+
+;; 	;; Textmate-esque indent shift left/right
+;; 	:i  "M-]"           'doom/smart-indent
+;; 	:i  "M-["           'doom/dumb-dedent
+
+;; 	;; Restore osx text objects
+;; 	:i  [A-backspace]   'evil-delete-backward-word
+;; 	:i  [A-delete]      'doom/delete-forward-word
+
+;; 	;;; <leader> and <localleader>
+;; 	:m ";" 'evil-ex
+;; 	(:leader
+;; 	  :nv ","   'doom/ivy-switch-project-buffer ; or 'helm-buffers-list
+;; 	  :nv "<"   'doom/ivy-switch-buffer         ; or 'helm-mini
+;; 	  :nv "."   (@find-file-in default-directory)
+;; 	  :nv "/"   (@find-file-in (doom/project-root) t)
+;; 	  :nv ">"   'projectile-find-file-in-known-projects
+;; 	  :n  ":"   'imenu-list-minor-mode          ; or 'helm-semantic-or-imenu
+;; 	  :nv ";"   'counsel-imenu
+;; 	  :v  "="   'align-regexp
+;; 	  :nv "a"   'projectile-find-other-file
+;; 	  :n  "b"   'counsel-bookmark               ; or 'helm-bookmarks
+;; 	  :n  "B"   'bookmark-delete
+;; 	  :n  "e"   'doom/flycheck-errors
+;; 	  :n  "k"   'doom:docs-lookup
+;; 	  :nv "l"   'doom/nlinum-toggle
+;; 	  :nv "m"   'counsel-recentf                ; or 'helm-recentf
+;; 	  :nv "M"   'projectile-recentf
+;; 	  :nv "p"   'counsel-yank-pop
+;; 	  :nv "P"   'counsel-projectile-switch-project ; or 'helm-projectile-switch-project
+;; 	  :n  "r"   'emr-show-refactor-menu
+;; 	  :n  "R"   'doom/reset-theme
+;; 	  :n  "s"   'yas-visit-snippet-file
+;; 	  :n  "S"   'doom/yas-find-file
+;; 	  ;; Quick quitting
+;; 	  :nv "Q"   'evil-save-and-quit
+;; 	  :nv "C-q" 'doom/kill-workgroup-and-quit
+;; 	  ;; Quick access to config files
+;; 	  :nv "E"   (@find-file-in doom-emacs-dir t)
+;; 	  :nv "\\"  (@find-file-in (f-expand ".dotfiles" "~") t)
+;; 	  ;; Alternative to C-h (used as window shortcut)
+;; 	  :n  "h"   'help-command
+;; 	  (:prefix "d" ; <diff>
+;; 	    :n "." 'doom/vcs-show-hunk
+;; 	    :n "/" 'vc-diff
+;; 	    :n "d" 'magit-status
+;; 	    :n "D" 'git-messenger:popup-message
+;; 	    :n "s" 'doom/vcs-stage-hunk
+;; 	    :v "s" 'magit-stage
+;; 	    :v "S" 'magit-stage
+;; 	    :n "r" 'doom/vcs-revert-hunk
+;; 	    :n "A" 'vc-annotate)
+;; 	  (:prefix "t" ; <tmux>
+;; 	    :n "." 'doom/tmux-cd-to-here
+;; 	    :n "/" 'doom/tmux-cd-to-project
+;; 	    :v "r" 'doom:tmux)
+;; 	  (:prefix "o" ; <os>
+;; 	    :n "o" 'os-open-in-default-program
+;; 	    :n "r" 'os-reveal
+;; 	    :n "p" 'os-reveal-project
+;; 	    :n "b" 'os-open-in-browser
+;; 	    :n "u" 'os-upload
+;; 	    :n "U" 'os-upload-folder
+;; 	    :n "t" 'os-switch-to-term
+;; 	    :n "T" 'os-switch-to-term-and-cd
+;; 	    (:when IS-MAC
+;; 	      :n "l" 'os-send-to-launchbar
+;; 	      :n "L" 'os-send-project-to-launchbar))
+;; 	  (:prefix "x" ; <org>
+;; 	    :n "x" 'doom/org
+;; 	    :n "." (@find-file-in org-directory)
+;; 	    :n "/" (@find-file-in org-directory t)
+;; 	    :n "e" (@find-file-in org-export-directory)))
+
+;; 	(:localleader
+;; 	  :n "\\" 'doom/neotree
+;; 	  :n "b"  'doom:build
+;; 	  :n "R"  'doom:repl
+;; 	  :v "R"  'doom:repl-eval)
+
+;; 	;; Don't move cursor on indent
+;; 	:n  "="  'doom/static-reindent
+;; 	:v  "="  'evil-indent
+
+;; 	;; Folding
+;; 	:n  "zr" 'doom/evil-open-folds
+;; 	:n  "zm" 'doom/evil-close-folds
+;; 	:n  "zx" 'doom/kill-real-buffer
+
+;; 	;; Navigation
+;; 	:nv "K"  'smart-up
+;; 	:m  "gD" 'doom/find-def
+;; 	:n  "gp" 'doom/reselect-paste
+;; 	:n  "gc" 'evil-commentary
+;; 	:n  "gx" 'evil-exchange
+;; 	:m  "g]" 'smart-forward
+;; 	:m  "g[" 'smart-backward	;; undo/redo for regions (NOTE: Buggy!)
+;; 	:nv "u"   'undo-tree-undo
+;; 	:nv "C-r" 'undo-tree-redo
+
+;;     ;; paste from recent yank register (which isn't overwritten)
+;; 	:v  "C-p" "\"0p"
+
+;; 	;; expand-region
+;; 	:v  "v"   'er/expand-region
+;; 	:v  "V"   'er/contract-region
+
+;; 	;; auto-yasnippet
+;; 	:i  "<C-tab>" 'aya-expand
+;; 	:nv "<C-tab>" 'aya-create
+
+;; 	;; yasnippet
+;; 	(:after yasnippet
+;; 	  (:map yas-minor-mode-map
+;; 	    :i [tab] 'yas-expand
+;; 	    :v [tab] 'doom/yas-insert-snippet))
+;; 	)
 
 
 ;; ===========================================

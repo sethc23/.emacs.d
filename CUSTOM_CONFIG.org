@@ -74,17 +74,25 @@
 	      module-org_man     ; links for viewing hyperlinked Man pages
 
 	  ;; Custom/experimental modules
-	      ;; custom-db          ; emacs as a db browser/client
-	      ;; custom-debug       ; nigh-universal debugging
+	      custom-db          ; emacs as a db browser/client
+	      custom-debug       ; nigh-universal debugging
 	      ;; custom-demo        ; allow me to demonstrate...
 	      ;; custom-screeps     ; The programmer MMO
-	      ;; custom-tags        ; if you liked it you should've generated a tag for it
-	      ;; custom-tmux        ; close the rift between GUI & terminal
+	      custom-tags        ; if you liked it you should've generated a tag for it
+	      custom-tmux        ; close the rift between GUI & terminal
 	      ;; custom-write       ; Emacs as a word processor
 
 	  ;; Personal settings
+
+		  custom-move_text
+		  custom-general_functions
+		  custom-key_macros
+		  ;; custom-quick_refiling
+		  ;; custom-org_babel_tangle_hooks
+
 	      ;; my-commands
 	      my-bindings
+
 	)
 #+END_SRC
 
@@ -95,6 +103,165 @@
 (load custom-file t)
 
 ;; Prompt about unsaved customizations at termination
-(add-hook 'kill-emacs-query-functions
-          'custom-prompt-customize-unsaved-options)
+;(add-hook 'kill-emacs-query-functions
+;          'custom-prompt-customize-unsaved-options)
 #+END_SRC
+
+** 4. Improved Modeline
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+   ;; change mode-line color by evil state
+   (lexical-let ((default-color (cons (face-background 'mode-line)
+                                      (face-foreground 'mode-line))))
+     (add-hook 'post-command-hook
+       (lambda ()
+         (let ((color (cond ((minibufferp) default-color)
+                            ((evil-insert-state-p) '("#e80000" . "#ffffff"))
+                            ((evil-emacs-state-p)  '("#444488" . "#ffffff"))
+                            ((buffer-modified-p)   '("#006fa0" . "#ffffff"))
+                            (t default-color))))
+           (set-face-background 'mode-line (car color))
+           (set-face-foreground 'mode-line (cdr color))))))
+#+END_SRC
+
+
+** 5. Capture Templates
+*** info
+- <keys> <description> <type> <target> <template> <properties>
+*** [[ http://orgmode.org/manual/Template-expansion.html#Template-expansion][Template Elements]]:
+
+#+BEGIN_SRC bash :tangle no
+	Generally:  (<keys> <description> <type> <target> <template> <properties>)
+
+	Type:
+		entry 		 -- An Org mode node, with a headline. Will be filed as the child of the target entry or as a top-level entry. The target file should be an Org mode file. 
+		item 		 -- A plain list item, placed in the first plain list at the target location. Again the target file should be an Org file. 
+		checkitem 	 -- A checkbox item. This only differs from the plain list item by the default template. 
+		table-line 	 -- a new line in the first table at the target location. Where exactly the line will be inserted depends on the properties :prepend and :table-line-pos (see below). 
+		plain 		 -- Text to be inserted as it is.
+
+	Target:
+		(file "path/to/file")					-- Text will be placed at the beginning or end of that file. 
+		(id "id of existing org entry")			-- Filing as child of this entry, or in the body of the entry. 
+		(file+headline "path/to/file" "node headline") -- Fast configuration if the target heading is unique in the file. 
+		(file+olp "path/to/file" "Level 1 heading" "Level 2" ...) -- For non-unique headings, the full path is safer. 
+		(file+regexp "path/to/file" "regexp to find location") -- Use a regular expression to position the cursor. 
+		(file+datetree "path/to/file")			-- Will create a heading in a date tree for today's date1. 
+		(file+datetree+prompt "path/to/file")	-- Will create a heading in a date tree, but will prompt for the date. 
+		(file+weektree "path/to/file")			-- Will create a heading in a week tree for today's date. Week trees are sorted by week and not by month unlike datetrees. 
+		(file+weektree+prompt "path/to/file")	-- Will create a heading in a week tree, but will prompt for the date. 
+		(file+function "path/to/file" function-finding-location) -- A function to find the right location in the file. 
+		(clock)									-- File to the entry that is currently being clocked. 
+		(function function-finding-location)	-- Most general way: write your own function which both visits the file and moves point to the right location.
+
+	Properties:
+		:prepend 		-- Normally new captured information will be appended at the target location (last child, last table line, last list item...). Setting this property will change that. 
+		:immediate-finish -- When set, do not offer to edit the information, just file it away immediately. This makes sense if the template only needs information that can be added automatically. 
+		:empty-lines	-- Set this to the number of lines to insert before and after the new item. Default 0, only common other value is 1. 
+		:clock-in		-- Start the clock in this item. 
+		:clock-keep		-- Keep the clock running when filing the captured entry. 
+		:clock-resume	-- If starting the capture interrupted a clock, restart that clock when finished with the capture. Note that :clock-keep has precedence over :clock-resume. When setting both to t, the current clock will run and the previous one will not be resumed. 
+		:unnarrowed		-- Do not narrow the target buffer, simply show the full buffer. Default is to narrow it so that you only see the new material. 
+		:table-line-pos -- Specification of the location in the table where the new line should be inserted. It can be a string, a variable holding a string or a function returning a string. The string should look like "II-3" meaning that the new line should become the third line before the second horizontal separator line. 
+		:kill-buffer 	-- If the target file was not yet visited when capture was invoked, kill the buffer again after capture is completed.
+
+  [[Template Expansion][http://orgmode.org/manual/Template-expansion.html#Template-expansion]]
+
+	Expansion    |  Value
+     ---------------------------------+----------------------------------------------
+     %[file]     Insert the contents of the file given by file.
+     %(sexp)     Evaluate Elisp sexp and replace with the result.
+                       For convenience, %:keyword (see below) placeholders
+                       within the expression will be expanded prior to this.
+                       The sexp must return a string.
+     %<...>      The result of format-time-string on the ... format specification.
+     %t          Timestamp, date only.
+     %T          Timestamp, with date and time.
+     %u, %U      Like the above, but inactive timestamps.
+     %i          Initial content, the region when capture is called while the
+                 region is active.
+                 The entire text will be indented like %i itself.
+     %a          Annotation, normally the link created with org-store-link.
+     %A          Like %a, but prompt for the description part.
+     %l          Like %a, but only insert the literal link.
+     %c          Current kill ring head.
+     %x          Content of the X clipboard.
+     %k          Title of the currently clocked task.
+     %K          Link to the currently clocked task.
+     %n          User name (taken from user-full-name).
+     %f          File visited by current buffer when org-capture was called.
+     %F          Full path of the file or directory visited by current buffer.
+     %:keyword   Specific information for certain link types, see below.
+     %^g         Prompt for tags, with completion on tags in target file.
+     %^G         Prompt for tags, with completion all tags in all agenda files.
+     %^t         Like %t, but prompt for date.  Similarly %^T, %^u, %^U.
+                 You may define a prompt like %^{Birthday}t.
+     %^C         Interactive selection of which kill or clip to use.
+     %^L         Like %^C, but insert as link.
+     %^{prop}p   Prompt the user for a value for property prop.
+     %^{prompt}  prompt the user for a string and replace this sequence with it.
+                 You may specify a default value and a completion table with
+                 %^{prompt|default|completion2|completion3...}.
+                 The arrow keys access a prompt-specific history.
+     %\1 ... %\N Insert the text entered at the Nth %^{prompt}, where N is
+                 a number, starting from 1.
+     %?          After completing the template, position cursor here.
+
+Special link type.
+
+     Link type                        |  Available keywords
+     ---------------------------------+----------------------------------------------
+     bbdb                             |  %:name %:company
+     irc                              |  %:server %:port %:nick
+     vm, vm-imap, wl, mh, mew, rmail, |  %:type %:subject %:message-id
+     gnus, notmuch                    |  %:from %:fromname %:fromaddress
+                                      |  %:to   %:toname   %:toaddress
+                                      |  %:date (message date header field)
+                                      |  %:date-timestamp (date as active timestamp)
+                                      |  %:date-timestamp-inactive (date as inactive timestamp)
+                                      |  %:fromto (either "to NAME" or "from NAME")3
+     gnus                             |  %:group, for messages also all email fields
+     eww, w3, w3m                     |  %:url
+     info                             |  %:file %:node
+     calendar                         |  %:date
+
+To place the cursor after template expansion use:
+
+     %?          After completing the template, position cursor here.
+
+See [[http://orgmode.org/manual/Adding-hyperlink-types.html#Adding-hyperlink-types][here]] for building new special link types
+
+#+END_SRC
+
+*** examples
+
+#+BEGIN_SRC emacs-lisp :tangle no
+    (setq org-capture-templates
+      '(
+        ("a" "Action Item" entry (file+headline "~/org/bjournal/index.org" "NOW")
+             "* [ ] %i\n" 
+             :prepend t
+             :clock-in t
+             :immediate-finish t 
+             :clock-keep t
+             )
+        ("e" "Save Entry" entry (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "* %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n" 
+             :prepend t
+             :clock-resume t
+             :immediate-finish t 
+             )
+       ("i" "Save Item" item (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "* [ ] %i\n:PROPERTIES: \n:CREATED: %T \n:SRC_FILE: [[file+emacs:%F][%f]] \n:SRC_LINK: %a\n:END:\n" 
+             :prepend t
+             :clock-resume t
+             :immediate-finish t 
+             )
+        ("t" "Todo" checkitem (file+headline "~/org/bjournal/index.org" "UNFILED")
+             "- [ ] %i \n%a\n[[_from][file+emacs:%f]]\n[[_to][file+emacs:%F]]\n(%T)\n" :prepend)
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+             "* %?\nEntered on %U\n  %i\n  %a")
+        )
+    )
+#+END_SRC
+
