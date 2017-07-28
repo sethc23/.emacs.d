@@ -1,1 +1,1 @@
-./CUSTOM_CONFIG.el
+private/init/CUSTOM_CONFIG.el

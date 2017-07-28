@@ -14,15 +14,15 @@
   "Evil-mode bindings for org-mode."
   :init-value nil
   :lighter " !"
-  :keymap (make-sparse-keymap)
+  ;;:keymap (make-sparse-keymap)
   :group 'evil-org)
 
-(add-hook 'org-load-hook 'doom|org-init t)
+;;(add-hook 'org-load-hook 'doom|org-init t)
 (add-hook 'org-load-hook 'doom|org-init-attach t)
 (add-hook 'org-load-hook 'doom|org-init-export t)
 (add-hook 'org-load-hook 'doom|org-init-capture t)
-(add-hook 'org-load-hook 'doom|org-hacks t)
-(add-hook 'org-mode-hook 'doom|org-hook)
+;(add-hook 'org-load-hook 'doom|org-hacks t)
+;(add-hook 'org-mode-hook 'doom|org-hook)
 
 ;; Custom variables
 (defvaralias 'org-directory 'doom-org-dir)
@@ -44,7 +44,7 @@ system can keep track of each buffer's attachments.")
 ;;
 (defun doom|org-hook ()
   "Run everytime `org-mode' is enabled."
-  (evil-org-mode +1)
+  ;;(evil-org-mode +1)
   (visual-line-mode +1)
   (setq line-spacing 1)
 
@@ -59,8 +59,8 @@ system can keep track of each buffer's attachments.")
     (when (file-exists-p buffer-file-name)
       (org-update-statistics-cookies t)))
 
-  (add-hook 'before-save-hook 'doom|org-update nil t)
-  (add-hook 'evil-insert-state-exit-hook 'doom|org-update nil t))
+  ;(add-hook 'before-save-hook 'doom|org-update nil t)
+  ;(add-hook 'evil-insert-state-exit-hook 'doom|org-update nil t))
 
 
 (defun doom|org-init ()
@@ -202,140 +202,143 @@ system can keep track of each buffer's attachments.")
   (use-package org-bullets :commands org-bullets-mode)
 
   ;; Keybinds
-  (map! (:map org-mode-map
-          "RET" nil
-          "C-j" nil
-          "C-k" nil
-          :i [remap doom/inflate-space-maybe] 'org-self-insert-command
-          :i "RET" 'org-return-indent)
+;  (map! (:map org-mode-map
+          ;; "RET" nil
+          ;; "C-j" nil
+          ;; "C-k" nil
+          ;; :i [remap doom/inflate-space-maybe] 'org-self-insert-command
+          ;; :i "RET" 'org-return-indent
+;          )
 
-        (:map evil-org-mode-map
-          :n  "RET" 'doom/org-dwim-at-point
-          ;;
-          :ni "A-l" 'org-metaright
-          :ni "A-h" 'org-metaleft
-          :ni "A-k" 'org-metaup
-          :ni "A-j" 'org-metadown
-          :ni "A-L" 'org-shiftmetaright
-          :ni "A-H" 'org-shiftmetaleft
-          :ni "A-K" 'org-shiftmetaup
-          :ni "A-J" 'org-shiftmetadown
-          ;; Expand tables (or shiftmeta move)
-          :ni "C-S-l" 'doom/org-table-append-field-or-shift-right
-          :ni "C-S-h" 'doom/org-table-prepend-field-or-shift-left
-          :ni "C-S-k" 'doom/org-table-prepend-row-or-shift-up
-          :ni "C-S-j" 'doom/org-table-append-row-or-shift-down
-          ;; Navigate table cells
-          :i  "C-L" 'doom/org-table-next-field
-          :i  "C-H" 'doom/org-table-previous-field
-          :i  "C-K" 'doom/org-table-previous-row
-          :i  "C-J" 'doom/org-table-next-row
+;        (:map evil-org-mode-map
+        ;;   :n  "RET" 'doom/org-dwim-at-point
+        ;;   ;;
+        ;;   :ni "A-l" 'org-metaright
+        ;;   :ni "A-h" 'org-metaleft
+        ;;   :ni "A-k" 'org-metaup
+        ;;   :ni "A-j" 'org-metadown
+        ;;   :ni "A-L" 'org-shiftmetaright
+        ;;   :ni "A-H" 'org-shiftmetaleft
+        ;;   :ni "A-K" 'org-shiftmetaup
+        ;;   :ni "A-J" 'org-shiftmetadown
+        ;;   ;; Expand tables (or shiftmeta move)
+        ;;   :ni "C-S-l" 'doom/org-table-append-field-or-shift-right
+        ;;   :ni "C-S-h" 'doom/org-table-prepend-field-or-shift-left
+        ;;   :ni "C-S-k" 'doom/org-table-prepend-row-or-shift-up
+        ;;   :ni "C-S-j" 'doom/org-table-append-row-or-shift-down
+        ;;   ;; Navigate table cells
+        ;;   :i  "C-L" 'doom/org-table-next-field
+        ;;   :i  "C-H" 'doom/org-table-previous-field
+        ;;   :i  "C-K" 'doom/org-table-previous-row
+        ;;   :i  "C-J" 'doom/org-table-next-row
 
-          :i  "C-e" 'org-end-of-line
-          :i  "C-a" 'org-beginning-of-line
+        ;;   :i  "C-e" 'org-end-of-line
+        ;;   :i  "C-a" 'org-beginning-of-line
 
-          :i  "<tab>" 'doom/org-indent-or-next-field
-          :i  [S-iso-lefttab] 'doom/org-dedent-or-prev-field ; for GNU Emacs
-          :i  [(shift tab)] 'doom/org-dedent-or-prev-field
-          :i  [backtab] 'doom/org-dedent-or-prev-field
+        ;;   :i  "<tab>" 'doom/org-indent-or-next-field
+        ;;   :i  [S-iso-lefttab] 'doom/org-dedent-or-prev-field ; for GNU Emacs
+        ;;   :i  [(shift tab)] 'doom/org-dedent-or-prev-field
+        ;;   :i  [backtab] 'doom/org-dedent-or-prev-field
 
-          :n  "<tab>" 'doom/org-toggle-fold
+        ;;   :n  "<tab>" 'doom/org-toggle-fold
 
-          :nv "j"   'evil-next-visual-line
-          :nv "k"   'evil-previous-visual-line
-          :v  "<S-tab>" 'doom/yas-insert-snippet
+        ;;   :nv "j"   'evil-next-visual-line
+        ;;   :nv "k"   'evil-previous-visual-line
+        ;;   :v  "<S-tab>" 'doom/yas-insert-snippet
 
-          :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
-          :n  "M-a" 'org-mark-element
-          :v  "M-a" 'mark-whole-buffer
+        ;;   :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
+        ;;   :n  "M-a" 'org-mark-element
+        ;;   :v  "M-a" 'mark-whole-buffer
 
-          :ni "<M-return>"   (λ! (doom/org-insert-item 'below))
-          :ni "<S-M-return>" (λ! (doom/org-insert-item 'above))
+        ;;   :ni "<M-return>"   (λ! (doom/org-insert-item 'below))
+        ;;   :ni "<S-M-return>" (λ! (doom/org-insert-item 'above))
 
-          ;; Formatting shortcuts
-          :i  "M-b" (λ! (doom/org-surround "*")) ; bold
-          :i  "M-u" (λ! (doom/org-surround "_")) ; underline
-          :i  "M-i" (λ! (doom/org-surround "/")) ; italics
-          :i  "M-`" (λ! (doom/org-surround "+")) ; strikethrough
+        ;;   ;; Formatting shortcuts
+        ;;   :i  "M-b" (λ! (doom/org-surround "*")) ; bold
+        ;;   :i  "M-u" (λ! (doom/org-surround "_")) ; underline
+        ;;   :i  "M-i" (λ! (doom/org-surround "/")) ; italics
+        ;;   :i  "M-`" (λ! (doom/org-surround "+")) ; strikethrough
 
-          :v  "M-b" "S*"
-          :v  "M-u" "S_"
-          :v  "M-i" "S/"
-          :v  "M-`" "S+"
+        ;;   :v  "M-b" "S*"
+        ;;   :v  "M-u" "S_"
+        ;;   :v  "M-i" "S/"
+        ;;   :v  "M-`" "S+"
 
-          (:localleader
-            :n  "RET" 'org-archive-subtree
-            :n  "SPC" 'doom/org-toggle-checkbox
-            :n  "/"  'org-sparse-tree
-            :n  "="  'org-align-all-tags
-            :n  "?"  'org-tags-view
-            :n  "D"  'org-deadline
-            :n  "L"  'org-store-link
-            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
-            :n  "T"  'org-todo
-            :n  "a"  'org-agenda
-            :n  "d"  'org-time-stamp
-            :n  "e"  'org-edit-special
-            :n  "i"  'doom/org-toggle-inline-images-at-point
-            :nv "l"  'org-insert-link
-            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
-            :n  "r"  'org-refile
-            :n  "s"  'org-schedule
-            :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
-            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
-            :n  "v"  'variable-pitch-mode
-            ;; :n  "w"  'writing-mode
-            :n  "x"  'doom/org-remove-link)
+        ;;   (:localleader
+        ;;     :n  "RET" 'org-archive-subtree
+        ;;     :n  "SPC" 'doom/org-toggle-checkbox
+        ;;     :n  "/"  'org-sparse-tree
+        ;;     :n  "="  'org-align-all-tags
+        ;;     :n  "?"  'org-tags-view
+        ;;     :n  "D"  'org-deadline
+        ;;     :n  "L"  'org-store-link
+        ;;     :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
+        ;;     :n  "T"  'org-todo
+        ;;     :n  "a"  'org-agenda
+        ;;     :n  "d"  'org-time-stamp
+        ;;     :n  "e"  'org-edit-special
+        ;;     :n  "i"  'doom/org-toggle-inline-images-at-point
+        ;;     :nv "l"  'org-insert-link
+        ;;     :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+        ;;     :n  "r"  'org-refile
+        ;;     :n  "s"  'org-schedule
+        ;;     :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+        ;;     :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+        ;;     :n  "v"  'variable-pitch-mode
+        ;;     ;; :n  "w"  'writing-mode
+        ;;     :n  "x"  'doom/org-remove-link)
 
-          ;; TODO Improve folding bindings
-          :n  "za"  'doom/org-toggle-fold
-          :n  "zA"  'org-shifttab
-          :n  "zc"  'outline-hide-subtree
-          :n  "zC"  (λ! (outline-hide-sublevels 1))
-          :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
-          :n  "zm"  (λ! (outline-hide-sublevels 1))
-          :n  "zo"  'outline-show-subtree
-          :n  "zO"  'outline-show-all
-          :n  "zr"  'outline-show-all
+        ;;   ;; TODO Improve folding bindings
+        ;;   :n  "za"  'doom/org-toggle-fold
+        ;;   :n  "zA"  'org-shifttab
+        ;;   :n  "zc"  'outline-hide-subtree
+        ;;   :n  "zC"  (λ! (outline-hide-sublevels 1))
+        ;;   :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
+        ;;   :n  "zm"  (λ! (outline-hide-sublevels 1))
+        ;;   :n  "zo"  'outline-show-subtree
+        ;;   :n  "zO"  'outline-show-all
+        ;;   :n  "zr"  'outline-show-all
 
-          :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
-          :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
-          :m  "]l"  'org-next-link
-          :m  "[l"  'org-previous-link
+        ;;   :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
+        ;;   :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
+        ;;   :m  "]l"  'org-next-link
+        ;;   :m  "[l"  'org-previous-link
 
-          :m  "gh"  'outline-up-heading
-          :m  "gj"  'org-forward-heading-same-level
-          :m  "gk"  'org-backward-heading-same-level
-          :m  "gl"  (λ! (call-interactively 'outline-next-visible-heading) (show-children))
+        ;;   :m  "gh"  'outline-up-heading
+        ;;   :m  "gj"  'org-forward-heading-same-level
+        ;;   :m  "gk"  'org-backward-heading-same-level
+        ;;   :m  "gl"  (λ! (call-interactively 'outline-next-visible-heading) (show-children))
 
-          :n  "go"  'org-open-at-point
-          :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
-                              (org-file-apps '(("\\.org$" . emacs)
-                                               (t . "open \"%s\""))))
-                          (call-interactively 'org-open-at-point)))
+        ;;   :n  "go"  'org-open-at-point
+        ;;   :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+        ;;                       (org-file-apps '(("\\.org$" . emacs)
+        ;;                                        (t . "open \"%s\""))))
+        ;;                   (call-interactively 'org-open-at-point)))
 
-          :n  "gQ"  'org-fill-paragraph
-          :m  "$"   'org-end-of-line
-          :m  "^"   'org-beginning-of-line
-          :n  "<"   'org-metaleft
-          :n  ">"   'org-metaright
-          :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
-          :v  ">"   (λ! (org-metaright) (evil-visual-restore))
-          :n  "-"   'org-cycle-list-bullet
-          :m  "<tab>" 'org-cycle)
+        ;;   :n  "gQ"  'org-fill-paragraph
+        ;;   :m  "$"   'org-end-of-line
+        ;;   :m  "^"   'org-beginning-of-line
+        ;;   :n  "<"   'org-metaleft
+        ;;   :n  ">"   'org-metaright
+        ;;   :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
+        ;;   :v  ">"   (λ! (org-metaright) (evil-visual-restore))
+        ;;   :n  "-"   'org-cycle-list-bullet
+        ;;   :m  "<tab>" 'org-cycle)
 
-        (:map org-src-mode-map
-          :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))
+        ;; (:map org-src-mode-map
+        ;;   :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))
 
-        (:after org-agenda
-          (:map org-agenda-mode-map
-            :e "<escape>" 'org-agenda-Quit
-            :e "m"   'org-agenda-month-view
-            :e "C-j" 'org-agenda-next-item
-            :e "C-k" 'org-agenda-previous-item
-            :e "C-n" 'org-agenda-next-item
-            :e "C-p" 'org-agenda-previous-item))))
-
+        ;; (:after org-agenda
+        ;;   (:map org-agenda-mode-map
+        ;;     :e "<escape>" 'org-agenda-Quit
+        ;;     :e "m"   'org-agenda-month-view
+        ;;     :e "C-j" 'org-agenda-next-item
+        ;;     :e "C-k" 'org-agenda-previous-item
+        ;;     :e "C-n" 'org-agenda-next-item
+        ;;     :e "C-p" 'org-agenda-previous-item))
+		;);
+	)
+)
 
 ;; FIXME
 ;; Initializes my own org-mode attachment system. I didn't like Org's native

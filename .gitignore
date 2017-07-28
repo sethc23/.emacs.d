@@ -41,3 +41,6 @@ places
 private/tmp_cache/
 url/
 srecode-map.el
+private
+history
+network-security.data

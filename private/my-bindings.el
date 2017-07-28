@@ -2,26 +2,43 @@
 
 (eval-when-compile (require 'core-defuns))
 
-(defmacro @find-file-in (path &optional project-p)
-  "Returns a interactive function for searching files"
-  `(lambda () (interactive)
-     (let ((default-directory ,path))
-       (,@(if project-p
-              '(counsel-projectile-find-file)
-            '(call-interactively 'counsel-find-file)
-            )))))
+;; (defmacro @find-file-in (path &optional project-p)
+;;   "Returns a interactive function for searching files"
+;;   `(lambda () (interactive)
+;;      (let ((default-directory ,path))
+;;        (,@(if project-p
+;;               '(counsel-projectile-find-file)
+;;             '(call-interactively 'counsel-find-file)
+;;             )))))
 
 ;; (global-set-key (kbd "C-c i")                               (lambda () (interactive) (find-file "~/.emacs.d/private/custom/index.org")))
-(global-set-key (kbd "C-c b")                               (lambda () (interactive) (find-file "~/org/bjournal/index.org")(split-window-right)))
+(global-set-key (kbd "C-c b")                               (lambda () (interactive) (find-file "~/.emacs.d/private/org/bjournal/index.org")(split-window-right)))
 (global-set-key (kbd "C-c <prior>")                         'back-button-global-backward)
 (global-set-key (kbd "C-c <next>")                          'back-button-global-forward)
-(bind-key "C-M-r"  'org-capture)
-(global-set-key (kbd "M-<up>") 'move-region-up)
-(global-set-key (kbd "M-<down>") 'move-region-down)
-(global-set-key (kbd "<f9>")                               (lambda () (interactive) (load-file "/home/ub2/.emacs.d/modules/custom-quick_refiling.el")))
-(global-set-key (kbd "C-S-<up>") nil)
-(global-set-key (kbd "C-S-<up>") 'move-line-up-one )
-(global-set-key (kbd "C-S-<down>") 'move-line-down-one )
+
+(global-set-key (kbd "C-M-r")                               'org-capture)
+;;(global-set-key (kbd "C-M-r")                               'helm-org-capture-templates)
+
+(global-set-key (kbd "<f9>")                                (lambda () (interactive) (load-file "~/.emacs.d/private/custom/hydras/custom-hydras.el")))
+(global-set-key (kbd "<f11>")                               (lambda () (interactive) (load-file "~/.emacs.d/private/custom/hydras/custom-hydras.el")))
+
+(global-set-key (kbd "C-S-<up>")                            nil)
+(global-set-key (kbd "C-S-<up>")                            'move-region-up)
+(global-set-key (kbd "C-S-<down>")                          'move-region-down)
+(global-set-key (kbd "M-<up>")                              'move-line-up )
+(global-set-key (kbd "M-<down>")                            'move-line-down )
+
+(global-set-key (kbd "C-c 1")                               'org-store-link)
+(global-set-key (kbd "C-c 2")                               'find-link-to-here)
+(global-set-key (kbd "C-c 3")                               'org-insert-last-stored-link)
+(global-set-key (kbd "C-x F")                               'find-function)
+
+(global-set-key (kbd "C-c C-a s")                           'org-agenda-list)
+(global-set-key (kbd "C-c C-x C-g")                         'org-clock-jump-to-current-clock)
+
+(global-set-key (kbd "C-c C-x C-w")                         'org-cut-subtree)
+(global-set-key (kbd "C-c C-x M-w")                         'org-copy-subtree)
+(global-set-key (kbd "C-c C-x C-y")                         'org-paste-subtree)
 
 (global-set-key (kbd "<f11>")                               nil)
 (global-set-key (kbd "<delete>")                            nil) ;; Remove the old keybinding
@@ -29,12 +46,13 @@
 
 (global-set-key (kbd "M-;")                                 nil)
 (global-set-key (kbd "M-;")                                 'eval-expression)
+(global-set-key (kbd "A-M-;")                               nil)
+(global-set-key (kbd "A-M-;")                               'eval-region)
+;; (global-set-key (kbd "A-:")                                 'eval-region)
+(global-set-key (kbd "C-M-;")                               'eval-buffer)
 
-(global-set-key (kbd "M-:")                                 nil)
-(global-set-key (kbd "M-:")                                 'eval-region)
+(global-set-key (kbd "C-M-!")                               'org-babel-execute-src-block)
 
-(global-set-key (kbd "A-:")                                 'eval-region)
-(global-set-key (kbd "A-;")                                 'eval-expression)
 
 (global-set-key (kbd "M-x")                                 nil)
 (global-set-key (kbd "M-x")                                 'clipboard-kill-region)
@@ -60,18 +78,49 @@
 ;; TODO expand handling of indent/dedent fx to include (in addition to cursor point), moving selected regions
 (global-set-key (kbd "<C-tab>")                             (λ! (insert "    ")))
 (global-set-key (kbd "<C-S-tab>")                           (λ! (delete-char 4)))
-(global-set-key (kbd "A-c f")                               'doom/org-toggle-fold)
-(global-set-key (kbd "A-c <up>")                            'move-text-line-up)
-(global-set-key (kbd "A-c <down>")                          'move-text-line-down)
-(global-set-key (kbd "A-c <C-up>")                          'move-text-region-up)
-(global-set-key (kbd "A-c <C-down>")                        'move-text-region-down)
+(global-set-key (kbd "C-x P")                               'fold-this)
+(global-set-key (kbd "C-x P")                               'fold-this-unfold-at-point)
+(global-set-key (kbd "C-x P")                               'smex)
+
+;;(global-set-key (kbd "A-c")                                 nil)
+(global-set-key (kbd "M-f")                                 'doom/org-toggle-fold)
+;;(global-set-key (kbd "A-c <up>")                            'move-text-line-up)
+;;(global-set-key (kbd "A-c <down>")                          'move-text-line-down)
+;;(global-set-key (kbd "A-c <C-up>")                          'move-text-region-up)
+;;(global-set-key (kbd "A-c <C-down>")                        'move-text-region-down)
 ;; (global-set-key (kbd "A-c <C-down>")                        (λ! (move-text-region-down)
 ;;                                                                 (insert "
 ;; ")))
 ;;dedent
 
 (global-set-key (kbd "M-z")                                 nil)
-(global-set-key (kbd "M-z")                                 'undo)
+(global-set-key (kbd "M-z")                                 'undo-tree-undo)
+(global-set-key (kbd "S-M-z")                               'undo-tree-redo)
+
+(global-set-key (kbd "M-x")                                 nil)
+(global-set-key (kbd "M-x")                                 'clipboard-kill-region)
+(global-set-key (kbd "M-c")                                 nil)
+(global-set-key (kbd "M-c")                                 'clipboard-kill-ring-save)
+(global-set-key (kbd "M-v")                                 nil)
+(global-set-key (kbd "M-v")                                 'clipboard-yank)
+
+
+(defun kill-line-backward (arg)
+  "Kill ARG lines backward."
+  (interactive "p")
+  (kill-line (- 1 arg)))
+(global-set-key (kbd "C-S-k")                               'kill-line-backward)
+
+(global-set-key (kbd "C-c C-f f")                           'org-refile)
+(global-set-key (kbd "C-c C-f l")                           'org-refile-goto-last-stored)
+(global-set-key (kbd "C-c C-f c")                           'my/org-refile-hydra/body)
+
+(global-set-key (kbd "C-c e")                               'org-agenda)
+
+
+(global-set-key (kbd "C-c e")                               'turn-off-evil-mode)
+
+
 (global-set-key (kbd "C-c a")                               'org-table-align)
 ;; (global-set-key [f8] 'neotree-toggle)
 
@@ -105,6 +154,8 @@
 ;;  I    | FRAME  [ A-C-M-... ]
 (global-set-key (kbd "A-C-M-\\")                            'toggle-max-frame-vertically)                         ;; MIN/MAX/FULL SCREEN
 (global-set-key (kbd "A-C-M--")                             'toggle-max-frame-horizontally)                       ;;     (for `split` --> see Window)
+(global-set-key (kbd "A-C-M-S-\\")                          'restore-frame-vertically)
+(global-set-key (kbd "A-C-M-S--")                           'restore-frame-horizontally)
 (global-set-key (kbd "<f11>")                            	nil)
 (global-set-key (kbd "<S-f11>")                         	nil)
 (global-set-key (kbd "<A-C-M-return>")                      'toggle-frame-fullscreen)
@@ -134,8 +185,18 @@
 (global-set-key (kbd "M-A-<next>")                          (λ! (wg-switch-to-workgroup-right)(doom/tab-display)) )
 (global-set-key (kbd "<help>")                               nil)
 (global-set-key (kbd "<M-A-help>")                          'doom:tab-create)                                           ;; CREATE/SHOW/DESTROY
+(global-set-key (kbd "M-A-<insert>")                        'doom:tab-create)
 (global-set-key (kbd "<M-A-f13>")                           'doom/tab-display)
 (global-set-key (kbd "<M-A-delete>")                        'doom:kill-tab)
+
+(global-set-key (kbd "C-t")                                 nil)
+(global-set-key (kbd "C-t ?")                               'doom/tab-display)
+(global-set-key (kbd "C-t k")                               'doom:kill-tab)
+(global-set-key (kbd "C-t n")                               'doom:tab-create)
+(global-set-key (kbd "C-t <left>")                          (λ! (wg-switch-to-workgroup-left)(doom/tab-display)) )
+(global-set-key (kbd "C-t <right>")                         (λ! (wg-switch-to-workgroup-right)(doom/tab-display)) )
+(global-set-key (kbd "C-t <up>")                            (λ! (doom:switch-to-tab 0)(doom/tab-display)) )
+(global-set-key (kbd "C-t <down>")                          (λ! (doom:switch-to-tab-last)(doom/tab-display)) )
 
 ;;  III   | WINDOW [ C-A-... ]
 (global-set-key (kbd "C-A-<left>")                           'window-jump-left)                                         ;; NAVIGATE INSTANCES
@@ -388,9 +449,7 @@
 
 ;;ivy-switch-buffer-other-window
 ;;ivy-gitlab-list-projects
-;;(global-set-key (kbd "C-c x") 'clipboard-kill-region)
-;;(global-set-key (kbd "C-c c") 'clipboard-kill-ring-save)
-;;(global-set-key (kbd "C-c v") 'clipboard-yank)
+
 
 
 ;; ===========================================

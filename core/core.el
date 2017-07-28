@@ -59,7 +59,7 @@
   "Hostname-based elisp temp directories")
 
 (defconst doom-org-dir
-  (expand-file-name "~/org")
+  (expand-file-name "~/.emacs.d/private/org")
   "Where to find org notes")
 
 ;; window-system is deprecated. Not on my watch!
@@ -208,7 +208,7 @@ enable multiple minor modes for the same regexp.")
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
 
-(add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
+;;(add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
 
 
 ;;

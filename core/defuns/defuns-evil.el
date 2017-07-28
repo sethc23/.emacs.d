@@ -58,16 +58,17 @@
 ;;; Custom argument handlers
 (defvar doom-buffer-match-global evil-ex-substitute-global "")
 (defun doom--evil-ex-match-init (name &optional face update-hook)
-  (with-current-buffer evil-ex-current-buffer
-    (cond
-     ((eq flag 'start)
-      (evil-ex-make-hl name
-        :face (or face 'evil-ex-substitute-matches)
-        :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
-      (setq flag 'update))
+  ;; (with-current-buffer evil-ex-current-buffer
+  ;;   (cond
+  ;;    ((eq flag 'start)
+  ;;     (evil-ex-make-hl name
+  ;;       :face (or face 'evil-ex-substitute-matches)
+  ;;       :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
+  ;;     (setq flag 'update))
 
-     ((eq flag 'stop)
-      (evil-ex-delete-hl name)))))
+  ;;    ((eq flag 'stop)
+  ;;     (evil-ex-delete-hl name))))
+  )
 
 (defun doom--evil-ex-buffer-match (arg &optional hl-name flags beg end)
   (when (and (eq flag 'update)
@@ -94,27 +95,29 @@
 
 ;;;###autoload
 (defun doom/evil-ex-buffer-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-buffer-match))
-    (with-selected-window (minibuffer-selected-window)
-      (doom--evil-ex-match-init hl-name)
-      (doom--evil-ex-buffer-match arg hl-name (list (if doom-buffer-match-global ?g))))))
+  ;; (let ((hl-name 'evil-ex-buffer-match))
+  ;;   (with-selected-window (minibuffer-selected-window)
+  ;;     (doom--evil-ex-match-init hl-name)
+  ;;     (doom--evil-ex-buffer-match arg hl-name (list (if doom-buffer-match-global ?g)))))
+  )
 
 ;;;###autoload
-(defun doom/evil-ex-global-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-match))
-    (with-selected-window (minibuffer-selected-window)
-      (doom--evil-ex-match-init hl-name)
-      (let ((result (car-safe (evil-ex-parse-global arg))))
-        (doom--evil-ex-buffer-match result hl-name nil (point-min) (point-max))))))
+(defun doom/evil-ex-global-match (flag &optional arg) t)
+  ;; (let ((hl-name 'evil-ex-global-match))
+  ;;   (with-selected-window (minibuffer-selected-window)
+  ;;     (doom--evil-ex-match-init hl-name)
+  ;;     (let ((result (car-safe (evil-ex-parse-global arg))))
+  ;;       (doom--evil-ex-buffer-match result hl-name nil (point-min) (point-max))))))
 
 ;;;###autoload
 (defun doom/evil-ex-undefine-cmd (cmd)
-  (if (string-match "^[^][]*\\(\\[\\(.*\\)\\]\\)[^][]*$" cmd)
-      (let ((abbrev (replace-match "" nil t cmd 1))
-            (full (replace-match "\\2" nil nil cmd 1)))
-        (setq evil-ex-commands (delq (assoc full evil-ex-commands) evil-ex-commands))
-        (setq evil-ex-commands (delq (assoc abbrev evil-ex-commands) evil-ex-commands)))
-    (setq evil-ex-commands (delq (assoc cmd evil-ex-commands) evil-ex-commands))))
+  ;; (if (string-match "^[^][]*\\(\\[\\(.*\\)\\]\\)[^][]*$" cmd)
+  ;;     (let ((abbrev (replace-match "" nil t cmd 1))
+  ;;           (full (replace-match "\\2" nil nil cmd 1)))
+  ;;       (setq evil-ex-commands (delq (assoc full evil-ex-commands) evil-ex-commands))
+  ;;       (setq evil-ex-commands (delq (assoc abbrev evil-ex-commands) evil-ex-commands)))
+  ;;   (setq evil-ex-commands (delq (assoc cmd evil-ex-commands) evil-ex-commands)))
+  )
 
 (defvar doom:map-maps '())
 
@@ -122,40 +125,53 @@
 (evil-define-command doom:map (bang input &optional mode)
   "Map ex commands to keybindings. INPUT should be in the format [KEY] [EX COMMAND]."
   (interactive "<!><a>")
-  (let* ((parts (s-split-up-to " " input 2 t))
-         (mode (or mode 'normal))
-         (key (kbd (car parts)))
-         (command (s-join " " (cdr parts)))
-         (map (cl-case mode
-                ('normal evil-normal-state-local-map)
-                ('insert evil-insert-state-local-map)
-                ('visual evil-visual-state-local-map)
-                ('motion evil-motion-state-local-map)
-                ('operator evil-operator-state-local-map)))
-         (fn `(lambda () (interactive) (evil-ex-eval ,command))))
-    (if bang
-        (evil-define-key mode nil key fn)
-      (define-key map key fn))))
+  ;; (let* ((parts (s-split-up-to " " input 2 t))
+  ;;        (mode (or mode 'normal))
+  ;;        (key (kbd (car parts)))
+  ;;        (command (s-join " " (cdr parts)))
+  ;;        (map (cl-case mode
+  ;;               ;;('normal evil-normal-state-local-map)
+  ;;               ;;('insert evil-insert-state-local-map)
+  ;;               ;;('visual evil-visual-state-local-map)
+  ;;               ;;('motion evil-motion-state-local-map)
+  ;;               ;;('operator evil-operator-state-local-map)
+  ;;               ))
+  ;;        (fn `(lambda () (interactive) (evil-ex-eval ,command))))
+  ;;   (if bang
+  ;;       (evil-define-key mode nil key fn)
+  ;;     (define-key map key fn)))
+  )
 
 ;;;###autoload (autoload 'doom:nmap "defuns-evil" nil t)
 (evil-define-command doom:nmap (bang input &optional mode)
-  (interactive "<!><a>") (doom:map bang input 'normal))
+  (interactive "<!><a>")
+  ;;(doom:map bang input 'normal)
+  )
 
 ;;;###autoload (autoload 'doom:imap "defuns-evil" nil t)
 (evil-define-command doom:imap (bang input &optional mode)
-  (interactive "<!><a>") (doom:map bang input 'insert))
+  (interactive "<!><a>")
+  ;;(doom:map bang input 'insert)
+  )
 
 ;;;###autoload (autoload 'doom:vmap "defuns-evil" nil t)
 (evil-define-command doom:vmap (bang input &optional mode)
-  (interactive "<!><a>") (doom:map bang input 'visual))
+  (interactive "<!><a>")
+  ;;(doom:map bang input 'visual)
+  )
 
 ;;;###autoload (autoload 'doom:mmap "defuns-evil" nil t)
 (evil-define-command doom:mmap (bang input &optional mode)
-  (interactive "<!><a>") (doom:map bang input 'motion))
+  (interactive "<!><a>")
+  ;;(doom:map bang input 'motion)
+  )
 
 ;;;###autoload (autoload 'doom:omap "defuns-evil" nil t)
 (evil-define-command doom:omap (bang input &optional mode)
-  (interactive "<!><a>") (doom:map bang input 'operator))
+  (interactive "<!><a>")
+  ;;(doom:map bang input 'operator)
+  )
+
 
 ;;;###autoload
 (defun doom/evil-snipe-easymotion ()
@@ -166,9 +182,10 @@
 ;;;###autoload
 (defun doom/evil-matchit ()
   (interactive)
-  (if (ignore-errors (hs-already-hidden-p))
-      (hs-toggle-hiding)
-    (call-interactively 'evilmi-jump-items)))
+  ;;(if (ignore-errors (hs-already-hidden-p))
+  ;;    (hs-toggle-hiding)
+  ;;  (call-interactively 'evilmi-jump-items))
+  )
 
 ;;;###autoload
 (defun doom*evil-command-window (hist cmd-key execute-fn)

@@ -46,7 +46,7 @@
          (,(concat
             "(\\("
             (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
-                          "associate" "define-org-link" "ex" "ex-local"
+                          "associate" "define-org-link" ;;"ex" "ex-local"
                           "define-org-section" "set" "noop"))
             "!\\)")
           (1 font-lock-keyword-face append))
@@ -60,8 +60,9 @@
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
 
-  (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
-               ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
+  (dolist (i '(
+               ;;("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
+               ;;("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
                ("Package" "\\(^\\s-*(use-package +\\)\\(\\_<[^ \n]+\\_>\\)" 2)
                ("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)))
     (push i imenu-generic-expression)))
@@ -79,7 +80,8 @@
                              x 'face (cond ((string= x "Variables")
                                             'font-lock-variable-name-face)
                                            ((or (string= x "Function")
-                                                (string-prefix-p "Evil " x t))
+                                                (string-prefix-p "Evil " x t)
+                                                )
                                             'font-lock-function-name-face)
                                            ((string= x "Types")
                                             'font-lock-type-face)
