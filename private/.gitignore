@@ -1,0 +1,16 @@
+cache
+elpa_mirror
+*.elc
+databases/org-db.sqlite
+custom/hooks/2017.07.28-all-hooks
+custom/hooks/2017.07.28-current-hooks-visible
+custom/hooks/2017.07.28-current-hooks-visible-2
+custom/hooks/dired-after-readin-hook
+custom/hooks/emacs-hooks@mbp2.sublime-workspace
+custom/hooks/emacs-lisp-mode-hook
+custom/hooks/emacs-org-mode-hook
+custom/hooks/find-file-hook
+custom/hooks/org-load-hook
+custom/hooks/prog-mode-hook
+custom/hooks/savehist-save-hook
+custom/hooks/text-mode-hook

@@ -1,0 +1,3 @@
+[submodule "org"]
+	path = org
+	url = git@gitlab.com:sethc23/org.git
